@@ -15,4 +15,14 @@ class Location extends Model
         'name',
 //        'coordinates', // todo
     ];
+
+    /**
+     * The links that are related to the .
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function actions()
+    {
+        return $this->hasMany(Action::class);
+    }
 }

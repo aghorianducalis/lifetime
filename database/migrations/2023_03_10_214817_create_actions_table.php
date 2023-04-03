@@ -17,8 +17,10 @@ return new class extends Migration
             $table->text('description');
             $table->timestamp('started_at');
             $table->timestamp('ended_at')->nullable();
+            $table->unsignedBigInteger('location_id')->nullable();
+            $table->foreign('location_id')->references('id')->on('locations')->onDelete('restrict');
+            $table->time('time');
             $table->timestamps();
-//            $table->foreignId('action_type_id')->constrained()->on('action_types')->onDelete('restrict');
         });
     }
 
