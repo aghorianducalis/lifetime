@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ResourceTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,5 +20,5 @@ Route::get('/', function () {
 });
 
 Route::resource('locations', LocationController::class);
+Route::resource('resources', ResourceTypeController::class);
 //Route::resource('actions', ActionController::class);
-//Route::resource('resources', ResourceController::class);

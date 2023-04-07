@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Location;
+use App\Models\ResourceType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class LocationSeeder extends Seeder
+class ResourceTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,11 +14,13 @@ class LocationSeeder extends Seeder
     public function run(): void
     {
         $titles = [
-            'home',
+            'tea',
+            'cigarettes',
+            'hryvna',
         ];
 
         foreach ($titles as $title) {
-            $location = Location::query()->create([
+            $resource = ResourceType::query()->create([
                 'title'         => $title,
                 'description'   => '',
             ]);

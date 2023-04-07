@@ -12,25 +12,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property $started_at
  * @property $ended_at
  */
-class Location extends Model
+class ResourceType extends Model
 {
     use HasFactory;
 
-    protected $table = 'locations';
+    protected $table = 'resource_types';
 
     protected $fillable = [
         'title',
         'description',
-//        'coordinates', // todo
     ];
-
-    /**
-     * The links that are related to the .
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function actions()
-    {
-        return $this->hasMany(Action::class);
-    }
 }
