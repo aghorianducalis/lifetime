@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $title
  * @property string $description
- * @property $started_at
- * @property $ended_at
+ * @property $created_at
+ * @property $updated_at
  */
 class Location extends Model
 {

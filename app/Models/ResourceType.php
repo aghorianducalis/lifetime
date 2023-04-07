@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $title
  * @property string $description
- * @property $started_at
- * @property $ended_at
+ * @property $created_at
+ * @property $updated_at
  */
 class ResourceType extends Model
 {
@@ -22,4 +22,15 @@ class ResourceType extends Model
         'title',
         'description',
     ];
+
+    /**
+     * The resources of that type.
+     * Items or bag or a bunch of some counted resources.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function resources()
+    {
+        return $this->hasMany(Resource::class);
+    }
 }

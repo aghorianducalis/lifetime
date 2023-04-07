@@ -8,33 +8,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property string $title
- * @property string $description
+ * @property double $count
+ * @property int $resource_type_id
  * @property $started_at
  * @property $ended_at
- * @property $created_at
- * @property $updated_at
+ * @property-read ResourceType $resourceType
  */
-class Action extends Model
+class Resource extends Model
 {
     use HasFactory;
 
-    protected $table = 'actions';
+    protected $table = 'resources';
 
     protected $fillable = [
-        'title',
-        'description',
-        'started_at',
-        'ended_at',
+        'count',
+        'resource_type_id',
     ];
 
     /**
-     * The location that are related to the action.
+     * The resource entity of that resource item.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function location(): BelongsTo
+    public function resourceType(): BelongsTo
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(ResourceType::class);
     }
 }
