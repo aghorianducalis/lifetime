@@ -19,6 +19,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('locations', LocationController::class);
-Route::resource('resources', ResourceTypeController::class);
+Route::namespace('locations')
+    /*->middleware('')*/
+    ->name('locations')
+    ->prefix('locations')
+    ->as('locations.')
+    ->group(function () {
+        Route::get('/', [LocationController::class, 'index'])->name('index');
+        Route::post('/', [LocationController::class, 'store'])->name('store');
+        Route::get('/{id}', [LocationController::class, 'show'])->name('show');
+        Route::put('/{id}', [LocationController::class, 'update'])->name('update');
+        Route::delete('/{id}', [LocationController::class, 'destroy'])->name('destroy');
+    });
+
+Route::apiResource('resources', ResourceTypeController::class);
 //Route::resource('events', EventController::class);
