@@ -14,12 +14,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property $ended_at
  * @property $created_at
  * @property $updated_at
+ * @property-read Location location
  */
-class Action extends Model
+class Event extends Model
 {
     use HasFactory;
 
-    protected $table = 'actions';
+    protected $table = 'events';
 
     protected $fillable = [
         'title',
@@ -29,7 +30,7 @@ class Action extends Model
     ];
 
     /**
-     * The location that are related to the action.
+     * The location that are related to the event.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

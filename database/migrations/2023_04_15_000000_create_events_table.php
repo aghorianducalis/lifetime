@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('actions', function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->timestamp('started_at');
-            $table->timestamp('ended_at')->nullable();
+
             $table->unsignedBigInteger('location_id')->nullable();
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('restrict');
+
+            $table->timestamp('started_at');
+            $table->timestamp('ended_at')->nullable();
             $table->time('time');
+
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('actions');
+        Schema::dropIfExists('events');
     }
 };

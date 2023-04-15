@@ -25,12 +25,12 @@ class Location extends Model
     ];
 
     /**
-     * The links that are related to the .
+     * The events that are related to the location.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function actions()
+    public function events()
     {
-        return $this->hasMany(Action::class);
+        return $this->hasMany(Event::class);
     }
 }

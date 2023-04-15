@@ -21,4 +21,4 @@ Route::get('/', function () {
 
 Route::resource('locations', LocationController::class);
 Route::resource('resources', ResourceTypeController::class);
-//Route::resource('actions', ActionController::class);
+//Route::resource('events', EventController::class);

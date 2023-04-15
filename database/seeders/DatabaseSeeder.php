@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
         if (app()->isProduction()) {
             //
         } else {
-//            \App\Models\User::factory(10)->create();
             $this->call([
                 LocationSeeder::class,
                 ResourceTypeSeeder::class,
