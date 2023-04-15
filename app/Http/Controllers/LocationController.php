@@ -5,62 +5,86 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Models\Location;
+use Illuminate\Http\Response;
 
 class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
-    }
+        /** @var \Illuminate\Database\Eloquent\Collection $locations */
+        $locations = Location::query()->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json($locations);
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param \App\Http\Requests\StoreLocationRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreLocationRequest $request)
     {
-        //
+        /** @var Location $location */
+        $location = Location::query()->create($request->validated());
+
+        return response()->json($location, Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
+     *
+     * @param int $locationId
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Location $location)
+    public function show(int $locationId)
     {
-        //
-    }
+        /** @var Location $location */
+        $location = Location::query()->findOrFail($locationId);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Location $location)
-    {
-        //
+        return response()->json($location);
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param \App\Http\Requests\UpdateLocationRequest $request
+     * @param int $locationId
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateLocationRequest $request, Location $location)
+    public function update(UpdateLocationRequest $request, int $locationId)
     {
-        //
+        /** @var Location $location */
+        $location = Location::query()->findOrFail($locationId);
+
+        $result = $location->update($request->validated());
+
+        return response()->json($result);
     }
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param int $locationId
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Location $location)
+    public function destroy(int $locationId)
     {
-        //
+        /** @var Location $location */
+        $location = Location::query()->findOrFail($locationId);
+
+        $result = false;
+
+        // todo check why this shit does not work in policy
+        if ($location->events->isEmpty()) {
+            $result = $location->delete();
+        }
+
+        return response()->json($result);
     }
 }
