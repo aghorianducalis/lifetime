@@ -22,7 +22,17 @@ class StoreResourceTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => [
+                'required',
+                'min:0',
+                'max:255',
+                'unique:resource_types,title',
+            ],
+            'description' => [
+                'required',
+                'min:0',
+                'max:10000',
+            ],
         ];
     }
 }

@@ -32,5 +32,17 @@ Route::namespace('locations')
         Route::delete('/{id}', [LocationController::class, 'destroy'])->name('destroy');
     });
 
-Route::apiResource('resources', ResourceTypeController::class);
-//Route::resource('events', EventController::class);
+Route::namespace('resource-types')
+    /*->middleware('')*/
+    ->name('resource-types')
+    ->prefix('resource-types')
+    ->as('resource-types.')
+    ->group(function () {
+        Route::get('/', [ResourceTypeController::class, 'index'])->name('index');
+        Route::post('/', [ResourceTypeController::class, 'store'])->name('store');
+        Route::get('/{id}', [ResourceTypeController::class, 'show'])->name('show');
+        Route::put('/{id}', [ResourceTypeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ResourceTypeController::class, 'destroy'])->name('destroy');
+    });
+
+//Route::apiResource('events', EventController::class);
