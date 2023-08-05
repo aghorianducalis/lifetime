@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -21,16 +22,15 @@ class Location extends Model
     protected $fillable = [
         'title',
         'description',
-//        'coordinates', // todo
     ];
 
     /**
-     * The events that are related to the location.
+     * The coordinates that are related to the location.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function events()
+    public function coordinates(): HasMany
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(Coordinate::class);
     }
 }

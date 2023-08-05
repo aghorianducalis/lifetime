@@ -2,42 +2,49 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property double $amount
- * @property int $resource_type_id
+ * @property float $x
+ * @property float $y
+ * @property float $z
+ * @property Carbon $t
+ * @property int $location_id
  * @property int $event_id
- * @property $started_at
- * @property $ended_at
- * @property-read ResourceType $resourceType
+ * @property $created_at
+ * @property $updated_at
+ * @property-read Location $location
  * @property-read Event $event
  */
-class Resource extends Model
+class Coordinate extends Model
 {
     use HasFactory;
 
-    protected $table = 'resources';
+    protected $table = 'coordinates';
 
     protected $fillable = [
-        'amount',
+        'x',
+        'y',
+        'z',
+        't',
     ];
 
     /**
-     * The resource entity of that resource item.
+     * The location that are related to the coordinate.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function resourceType(): BelongsTo
+    public function location(): BelongsTo
     {
-        return $this->belongsTo(ResourceType::class);
+        return $this->belongsTo(Location::class);
     }
 
     /**
-     * The event that are related to the resource.
+     * The event that are related to the coordinate.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

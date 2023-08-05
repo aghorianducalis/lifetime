@@ -13,16 +13,8 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('description');
-
-            $table->unsignedBigInteger('location_id')->nullable();
-            $table->foreign('location_id')->references('id')->on('locations')->onDelete('restrict');
-
-            $table->timestamp('started_at');
-            $table->timestamp('ended_at')->nullable();
-            $table->time('time');
-
             $table->timestamps();
         });
     }

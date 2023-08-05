@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
-            $table->double('count');
+            $table->double('amount');
             $table->unsignedBigInteger('resource_type_id');
             $table->foreign('resource_type_id')->references('id')->on('resource_types')->onDelete('restrict');
+            $table->unsignedBigInteger('event_id');
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
             $table->timestamps();
         });
     }
