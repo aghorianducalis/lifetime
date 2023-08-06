@@ -2,20 +2,20 @@
 
 namespace Database\Factories;
 
-use App\Models\Location;
+use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Location>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
  */
-class LocationFactory extends Factory
+class EventFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var class-string<\Illuminate\Database\Eloquent\Model>
      */
-    protected $model = Location::class;
+    protected $model = Event::class;
 
     /**
      * Define the model's default state.
@@ -25,7 +25,7 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'        => fake()->unique()->sentence(),
+            'title'        => 'Event #' . fake()->randomNumber() . ' ' . fake()->sentence(5),
             'description'  => fake()->text(),
         ];
     }

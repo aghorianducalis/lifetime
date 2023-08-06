@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 LocationSeeder::class,
                 ResourceTypeSeeder::class,
+                EventSeeder::class,
+                ResourceSeeder::class,
+                CoordinateSeeder::class,
             ]);
         }
     }

@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $title
  * @property string $description
- * @property-read Location location
  */
 class Event extends Model
 {

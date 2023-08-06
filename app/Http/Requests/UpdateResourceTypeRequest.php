@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateResourceTypeRequest extends FormRequest
 {
@@ -26,7 +27,7 @@ class UpdateResourceTypeRequest extends FormRequest
                 'required',
                 'min:0',
                 'max:255',
-                'unique:resource_types,title', // todo except current id
+                Rule::unique('resource_types', 'title')->ignore($this->route('id')),
             ],
             'description' => [
                 'required',

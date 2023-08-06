@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ResourceType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +11,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ResourceTypeFactory extends Factory
 {
     /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected $model = ResourceType::class;
+
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
@@ -17,7 +25,8 @@ class ResourceTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            // todo add factory fot testing
+            'title'        => 'Resource type #' . fake()->randomNumber() . ' ' . fake()->sentence(),
+            'description'  => fake()->text(),
         ];
     }
 }

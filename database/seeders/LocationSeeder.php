@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Location;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class LocationSeeder extends Seeder
@@ -18,9 +17,8 @@ class LocationSeeder extends Seeder
         ];
 
         foreach ($titles as $title) {
-            $location = Location::query()->create([
-                'title'         => $title,
-                'description'   => '',
+            $location = Location::factory()->create([
+                'title' => $title,
             ]);
         }
     }
