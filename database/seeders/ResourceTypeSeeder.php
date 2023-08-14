@@ -12,16 +12,6 @@ class ResourceTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $titles = [
-            'tea',
-            'cigarettes',
-            'hryvna',
-        ];
-
-        foreach ($titles as $title) {
-            $resource = ResourceType::factory()->create([
-                'title' => $title,
-            ]);
-        }
+        $events = ResourceType::factory()->count(100)->create();
     }
 }

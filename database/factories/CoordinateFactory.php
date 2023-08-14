@@ -29,7 +29,7 @@ class CoordinateFactory extends Factory
         return [
             'x'           => fake()->randomFloat(),
             'y'           => fake()->randomFloat(),
-            'z'           => 0,
+            'z'           => fake()->randomFloat(),
             't'           => fake()->dateTime(),
             'event_id'    => Event::factory(),
             'location_id' => Location::factory(),

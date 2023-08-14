@@ -12,14 +12,6 @@ class LocationSeeder extends Seeder
      */
     public function run(): void
     {
-        $titles = [
-            'home',
-        ];
-
-        foreach ($titles as $title) {
-            $location = Location::factory()->create([
-                'title' => $title,
-            ]);
-        }
+        $locations = Location::factory()->count(100)->create();
     }
 }
