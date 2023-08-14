@@ -4,34 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreResourceTypeRequest;
 use App\Http\Requests\UpdateResourceTypeRequest;
-use App\Models\ResourceType;
+use App\Http\Resources\ResourceTypeResource;
+use App\Services\ResourceTypeService;
 
 class ResourceTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\ResourceTypeCollection
      */
-    public function index()
+    public function index(ResourceTypeService $service)
     {
-        /** @var \Illuminate\Database\Eloquent\Collection $resourceTypes */
-        $resourceTypes = ResourceType::query()->get();
+        $resourceTypes = $service->getAllResourceTypes();
 
-        return response()->json($resourceTypes);
+        return ResourceTypeResource::collection($resourceTypes);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param \App\Http\Requests\StoreResourceTypeRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\ResourceTypeResource
      */
-    public function store(StoreResourceTypeRequest $request)
+    public function store(StoreResourceTypeRequest $request, ResourceTypeService $service)
     {
-        /** @var ResourceType $resourceType */
-        $resourceType = ResourceType::query()->create($request->validated());
+        $resourceType = $service->createResourceType($request->validated());
 
+        return new ResourceTypeResource($resourceType);
         return response()->json($resourceType, Response::HTTP_CREATED);
     }
 
@@ -39,14 +39,13 @@ class ResourceTypeController extends Controller
      * Display the specified resource.
      *
      * @param int $resourceTypeId
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\ResourceTypeResource
      */
-    public function show(int $resourceTypeId)
+    public function show(int $resourceTypeId, ResourceTypeService $service)
     {
-        /** @var ResourceType $resourceType */
-        $resourceType = ResourceType::query()->findOrFail($resourceTypeId);
+        $resourceType = $service->getResourceTypeById($resourceTypeId);
 
-        return response()->json($resourceType);
+        return new ResourceTypeResource($resourceType);
     }
 
     /**
@@ -54,16 +53,13 @@ class ResourceTypeController extends Controller
      *
      * @param \App\Http\Requests\UpdateResourceTypeRequest $request
      * @param int $resourceTypeId
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\ResourceTypeResource
      */
-    public function update(UpdateResourceTypeRequest $request, int $resourceTypeId)
+    public function update(UpdateResourceTypeRequest $request, int $resourceTypeId, ResourceTypeService $service)
     {
-        /** @var ResourceType $resourceType */
-        $resourceType = ResourceType::query()->findOrFail($resourceTypeId);
+        $resourceType = $service->updateResourceType($request->validated(), $resourceTypeId);
 
-        $result = $resourceType->update($request->validated());
-
-        return response()->json($result);
+        return new ResourceTypeResource($resourceType);
     }
 
     /**
@@ -72,18 +68,10 @@ class ResourceTypeController extends Controller
      * @param int $resourceTypeId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $resourceTypeId)
+    public function destroy(int $resourceTypeId, ResourceTypeService $service)
     {
-        /** @var ResourceType $resourceType */
-        $resourceType = ResourceType::query()->findOrFail($resourceTypeId);
+        $result = $service->deleteResourceType($resourceTypeId);
 
-        $result = false;
-
-        // todo check why this shit does not work in policy
-        if ($resourceType->resources->isEmpty()) {
-            $result = $resourceType->delete();
-        }
-
-        return response()->json($result);
+        return response()->json(['result' => $result]);
     }
 }
