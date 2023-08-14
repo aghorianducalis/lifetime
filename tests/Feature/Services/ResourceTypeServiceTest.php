@@ -16,13 +16,13 @@ class ResourceTypeServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected ResourceTypeService $resourceTypeService;
+    protected ResourceTypeService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
         $resourceTypeRepository = new ResourceTypeRepository();
-        $this->resourceTypeService = new ResourceTypeService($resourceTypeRepository);
+        $this->service = new ResourceTypeService($resourceTypeRepository);
     }
 
     /**
@@ -34,7 +34,7 @@ class ResourceTypeServiceTest extends TestCase
         /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->create();
 
-        $foundResourceType = $this->resourceTypeService->getResourceTypeById($resourceType->id);
+        $foundResourceType = $this->service->getResourceTypeById($resourceType->id);
 
         $this->assertInstanceOf(ResourceType::class, $foundResourceType);
         $this->assertEquals($resourceType->title, $foundResourceType->title);
@@ -49,7 +49,7 @@ class ResourceTypeServiceTest extends TestCase
     {
         ResourceType::factory(5)->create();
 
-        $resourceTypes = $this->resourceTypeService->getAllResourceTypes();
+        $resourceTypes = $this->service->getAllResourceTypes();
 
         $this->assertCount(5, $resourceTypes);
     }
@@ -62,7 +62,7 @@ class ResourceTypeServiceTest extends TestCase
     {
         $data = ResourceType::factory()->make()->toArray();
 
-        $resourceType = $this->resourceTypeService->createResourceType($data);
+        $resourceType = $this->service->createResourceType($data);
 
         $this->assertInstanceOf(ResourceType::class, $resourceType);
         $this->assertEquals($data['title'], $resourceType->title);
@@ -82,7 +82,7 @@ class ResourceTypeServiceTest extends TestCase
         $resourceType = ResourceType::factory()->create();
         $newData = ResourceType::factory()->make()->toArray();
 
-        $updatedResourceType = $this->resourceTypeService->updateResourceType($newData, $resourceType->id);
+        $updatedResourceType = $this->service->updateResourceType($newData, $resourceType->id);
 
         $this->assertInstanceOf(ResourceType::class, $updatedResourceType);
         $this->assertEquals($newData['title'], $updatedResourceType->title);
@@ -102,12 +102,12 @@ class ResourceTypeServiceTest extends TestCase
     {
         $resourceType = ResourceType::factory()->create();
 
-        $result = $this->resourceTypeService->deleteResourceType($resourceType->id);
+        $result = $this->service->deleteResourceType($resourceType->id);
 
         $this->assertTrue($result);
 
         $this->expectException(ModelNotFoundException::class);
-        $this->resourceTypeService->getResourceTypeById($resourceType->id);
+        $this->service->getResourceTypeById($resourceType->id);
         $this->assertDatabaseMissing($resourceType->getTable(), [
             'id' => $resourceType->id
         ]);
