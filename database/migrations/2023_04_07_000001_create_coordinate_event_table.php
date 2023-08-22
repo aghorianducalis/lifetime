@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coordinates', function (Blueprint $table) {
+        Schema::create('coordinate_event', function (Blueprint $table) {
             $table->id();
-            $table->float('x');
-            $table->float('y');
-            $table->float('z');
-            $table->datetime('t');
-            $table->unsignedBigInteger('location_id');
-            $table->foreign('location_id')->references('id')->on('locations')->onDelete('set null');
+            $table->unsignedBigInteger('coordinate_id')->nullable();
+            $table->foreign('coordinate_id')->references('id')->on('coordinates')->onDelete('set null');
             $table->unsignedBigInteger('event_id');
             $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
             $table->timestamps();
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coordinates');
+        Schema::dropIfExists('coordinate_event');
     }
 };

@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Coordinate;
 use App\Models\Location;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,8 +27,9 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'        => fake()->unique()->sentence(),
-            'description'  => fake()->text(),
+            'title'         => fake()->unique()->sentence(),
+            'description'   => fake()->text(),
+            'coordinate_id' => Coordinate::factory()->create(['t' => Carbon::parse(0)->toDateTimeString()]),
         ];
     }
 }

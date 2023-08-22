@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->text('description');
+            $table->unsignedBigInteger('coordinate_id')->nullable();
+            $table->foreign('coordinate_id')->references('id')->on('coordinates')->onDelete('set null');
             $table->timestamps();
         });
     }

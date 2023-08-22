@@ -5,7 +5,9 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -13,12 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $y
  * @property float $z
  * @property Carbon $t
- * @property int $location_id
- * @property int $event_id
- * @property $created_at
- * @property $updated_at
- * @property-read Location $location
- * @property-read Event $event
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property-read Location|null $location
+ * @property-read Event[]|Collection $events
  */
 class Coordinate extends Model
 {
@@ -34,22 +34,31 @@ class Coordinate extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        't' => 'datetime',
+    ];
+
+    /**
      * The location that are related to the coordinate.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function location(): BelongsTo
+    public function location(): HasOne
     {
-        return $this->belongsTo(Location::class);
+        return $this->hasOne(Location::class);
     }
 
     /**
-     * The event that are related to the coordinate.
+     * The events that are related to the coordinate.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function event(): BelongsTo
+    public function events(): HasMany
     {
-        return $this->belongsTo(Event::class);
+        return $this->hasMany(Event::class);
     }
 }

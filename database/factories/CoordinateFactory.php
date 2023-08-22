@@ -31,8 +31,6 @@ class CoordinateFactory extends Factory
             'y'           => fake()->randomFloat(),
             'z'           => fake()->randomFloat(),
             't'           => fake()->dateTime(),
-            'event_id'    => Event::factory(),
-            'location_id' => Location::factory(),
         ];
     }
 }

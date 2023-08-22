@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Repositories\EventRepository;
 use App\Services\EventService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +15,7 @@ use Tests\TestCase;
  */
 class EventServiceTest extends TestCase
 {
+//    use DatabaseMigrations;
     use RefreshDatabase;
 
     protected EventService $service;
