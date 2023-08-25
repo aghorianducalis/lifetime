@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ResourceType;
 use App\Repositories\Interfaces\ResourceTypeRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class ResourceTypeService
 {
@@ -19,9 +20,9 @@ class ResourceTypeService
         return $this->resourceTypeRepository->find($id);
     }
 
-    public function getAllResourceTypes()
+    public function getAllResourceTypes(): Collection
     {
-        return $this->resourceTypeRepository->all();
+        return $this->resourceTypeRepository->matching();
     }
 
     public function createResourceType(array $data): ResourceType
@@ -34,7 +35,7 @@ class ResourceTypeService
         return $this->resourceTypeRepository->update($data, $id);
     }
 
-    public function deleteResourceType($id)
+    public function deleteResourceType($id): bool
     {
         return $this->resourceTypeRepository->delete($id);
     }

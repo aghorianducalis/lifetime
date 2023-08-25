@@ -3,45 +3,23 @@
 namespace App\Repositories;
 
 use App\Models\ResourceType;
+use App\Repositories\Filters\Criteria;
+use App\Repositories\Filters\TitleFilter;
 use App\Repositories\Interfaces\ResourceTypeRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 
-class ResourceTypeRepository implements ResourceTypeRepositoryInterface
+class ResourceTypeRepository extends EloquentRepository implements ResourceTypeRepositoryInterface
 {
-    public function all()
+    public function findByTitle(string $title)
     {
-        return ResourceType::all();
+        $criteria = new Criteria;
+        $criteria->push(new TitleFilter($title));
+
+        return $this->matching($criteria);
     }
 
-    public function find($id)
+    protected function query(): Builder
     {
-        return ResourceType::query()->findOrFail($id);
-    }
-
-    public function create(array $data)
-    {
-        return ResourceType::query()->create($data);
-    }
-
-    public function update(array $data, $id)
-    {
-        $resourceType = $this->find($id);
-        $resourceType->update($data);
-
-        return $resourceType;
-    }
-
-    public function delete($id): bool
-    {
-        /** @var ResourceType $resourceType */
-        $resourceType = ResourceType::query()->findOrFail($id);
-
-        // todo check why this shit does not work in policy
-        if ($resourceType->resources->isNotEmpty()) {
-//            $resourceType->resources->delete();
-        }
-
-        $result = $resourceType->delete();
-
-        return $result;
+        return ResourceType::query();
     }
 }

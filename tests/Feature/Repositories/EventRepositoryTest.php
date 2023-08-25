@@ -52,13 +52,13 @@ class EventRepositoryTest extends TestCase
 
     /**
      * @test
-     * @covers ::all
+     * @covers ::matching
      */
-    public function testAll()
+    public function testGetList()
     {
         Event::factory(5)->create();
 
-        $events = $this->repository->all();
+        $events = $this->repository->matching();
 
         $this->assertCount(5, $events);
     }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Event;
 use App\Repositories\Interfaces\EventRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class EventService
 {
@@ -19,9 +20,9 @@ class EventService
         return $this->repository->find($id);
     }
 
-    public function getAllEvents()
+    public function getAllEvents(): Collection
     {
-        return $this->repository->all();
+        return $this->repository->matching();
     }
 
     public function createEvent(array $data): Event
@@ -34,7 +35,7 @@ class EventService
         return $this->repository->update($data, $id);
     }
 
-    public function deleteEvent($id)
+    public function deleteEvent($id): bool
     {
         return $this->repository->delete($id);
     }
