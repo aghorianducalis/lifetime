@@ -3,6 +3,8 @@
 namespace Tests\Feature\Repositories;
 
 use App\Models\ResourceType;
+use App\Repositories\Filters\Criteria;
+use App\Repositories\Filters\TitleFilter;
 use App\Repositories\ResourceTypeRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -52,15 +54,31 @@ class ResourceTypeRepositoryTest extends TestCase
 
     /**
      * @test
-     * @covers ::all
+     * @covers ::matching
      */
-    public function testAll()
+    public function testGetAll()
     {
         ResourceType::factory(5)->create();
 
-        $resourceTypes = $this->repository->all();
+        $resourceTypes = $this->repository->matching();
 
         $this->assertCount(5, $resourceTypes);
+    }
+
+    /**
+     * @test
+     * @covers ::matching
+     */
+    public function testMatching()
+    {
+        $resourceTypesCreated = ResourceType::factory(5)->create();
+
+        $criteria = new Criteria;
+        $criteria->push(new TitleFilter($resourceTypesCreated->random()->title));
+
+        $resourceTypesObtained = $this->repository->matching($criteria);
+
+        $this->assertCount(1, $resourceTypesObtained);
     }
 
     /**
