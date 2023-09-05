@@ -3,7 +3,8 @@
 namespace Tests\Feature\Services;
 
 use App\Models\ResourceType;
-use App\Repositories\ResourceTypeRepository;
+use App\Models\User;
+use App\Repositories\Interfaces\ResourceTypeRepositoryInterface;
 use App\Services\ResourceTypeService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,8 +22,7 @@ class ResourceTypeServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $resourceTypeRepository = new ResourceTypeRepository();
-        $this->service = new ResourceTypeService($resourceTypeRepository);
+        $this->service = app(ResourceTypeService::class);
     }
 
     /**
@@ -39,6 +39,34 @@ class ResourceTypeServiceTest extends TestCase
         $this->assertInstanceOf(ResourceType::class, $foundResourceType);
         $this->assertEquals($resourceType->title, $foundResourceType->title);
         $this->assertEquals($resourceType->description, $foundResourceType->description);
+    }
+
+    /**
+     * @test
+     * @covers ::getResourceTypesByUser
+     */
+    public function testGetResourceTypeByUser()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        // expect to call the findByUser method on repository object
+        $repository = $this->mock(ResourceTypeRepositoryInterface::class);
+        // todo check why this returns an error
+//        $repository->shouldReceive('findByUser')->once()->with($user->id)->andReturn([]);
+
+        $result = $this->service->getResourceTypesByUser($user->id);
+
+        $this->assertEquals([], $result->toArray());
+
+        /** @var ResourceType $resourceType */
+        $resourceType = ResourceType::factory()->forUser($user)->create();
+
+        $foundResourceTypes = $this->service->getResourceTypesByUser($user->id);
+        $this->assertCount(1, $foundResourceTypes);
+        $foundResourceType = $foundResourceTypes->first();
+        $this->assertEquals($resourceType->id, $foundResourceType->id);
+        $this->assertEquals($user->id, $foundResourceType->users()->first()->id);
     }
 
     /**

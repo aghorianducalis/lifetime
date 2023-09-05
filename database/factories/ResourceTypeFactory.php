@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ResourceType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,5 +29,14 @@ class ResourceTypeFactory extends Factory
             'title'        => 'Resource type #' . fake()->randomNumber() . ' ' . fake()->sentence(),
             'description'  => fake()->text(),
         ];
+    }
+
+    public function forUser(User $user = null): Factory
+    {
+        $user = $user ?: User::factory()->create();
+
+        return $this->afterCreating(function (ResourceType $resourceType) use ($user) {
+            $resourceType->users()->attach($user);
+        });
     }
 }

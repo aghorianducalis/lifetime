@@ -3,6 +3,7 @@
 namespace Tests\Feature\Repositories;
 
 use App\Models\ResourceType;
+use App\Models\User;
 use App\Repositories\Filters\Criteria;
 use App\Repositories\Filters\TitleFilter;
 use App\Repositories\ResourceTypeRepository;
@@ -50,6 +51,25 @@ class ResourceTypeRepositoryTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
 
         $this->repository->find(self::NON_EXISTING_ID);
+    }
+
+    /**
+     * @test
+     * @covers ::findByUser
+     */
+    public function testFindByUser()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var ResourceType $resourceType */
+        $resourceType = ResourceType::factory()->forUser($user)->create();
+
+        $foundResourceTypes = $this->repository->findByUser($user->id);
+        $this->assertCount(1, $foundResourceTypes);
+        $foundResourceType = $foundResourceTypes->first();
+        $this->assertEquals($resourceType->id, $foundResourceType->id);
+        $this->assertEquals($user->id, $foundResourceType->users()->first()->id);
     }
 
     /**

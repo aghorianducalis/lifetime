@@ -20,6 +20,11 @@ class ResourceTypeService
         return $this->resourceTypeRepository->find($id);
     }
 
+    public function getResourceTypesByUser(?int $userId): Collection
+    {
+        return $this->resourceTypeRepository->findByUser($userId);
+    }
+
     public function getAllResourceTypes(): Collection
     {
         return $this->resourceTypeRepository->matching();

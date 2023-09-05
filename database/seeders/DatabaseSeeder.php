@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             //
         } else {
             $this->call([
+                UserSeeder::class,
                 LocationSeeder::class,
                 ResourceTypeSeeder::class,
                 EventSeeder::class,
