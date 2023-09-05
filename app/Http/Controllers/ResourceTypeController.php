@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexResourceTypeRequest;
 use App\Http\Requests\StoreResourceTypeRequest;
 use App\Http\Requests\UpdateResourceTypeRequest;
 use App\Http\Resources\ResourceTypeResource;
@@ -14,9 +15,9 @@ class ResourceTypeController extends Controller
      *
      * @return \App\Http\Resources\ResourceTypeCollection
      */
-    public function index(ResourceTypeService $service)
+    public function index(IndexResourceTypeRequest $request, ResourceTypeService $service)
     {
-        $resourceTypes = $service->getAllResourceTypes();
+        $resourceTypes = $service->getResourceTypesByUser($request->user_id);
 
         return ResourceTypeResource::collection($resourceTypes);
     }
