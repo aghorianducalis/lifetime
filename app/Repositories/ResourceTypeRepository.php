@@ -20,7 +20,7 @@ class ResourceTypeRepository extends EloquentRepository implements ResourceTypeR
         return $this->matching($criteria);
     }
 
-    public function findByUser(?int $userId): Collection
+    public function findByUser(?string $userId): Collection
     {
         $criteria = new Criteria;
         $criteria->push(new HasUserFilter($userId));

@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('resource_type_user', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('resource_type_id')->nullable();
-            $table->foreign('resource_type_id')->references('id')->on('resource_types')->onDelete('cascade');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignUuid('resource_type_id')->references('id')->on('resource_types')->onDelete('cascade');
+            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

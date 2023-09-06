@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('coordinate_id')->nullable();
             $table->foreign('coordinate_id')->references('id')->on('coordinates')->onDelete('set null');
-            $table->unsignedBigInteger('event_id');
-            $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
+            $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->timestamps();
         });
     }

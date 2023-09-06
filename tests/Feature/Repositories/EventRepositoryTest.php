@@ -47,7 +47,7 @@ class EventRepositoryTest extends TestCase
     {
         $this->expectException(ModelNotFoundException::class);
 
-        $this->repository->find(self::NON_EXISTING_ID);
+        $this->repository->find($this->getRandomUuid());
     }
 
     /**
@@ -91,7 +91,7 @@ class EventRepositoryTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
 
         $newData = Event::factory()->make()->toArray();
-        $this->repository->update($newData, self::NON_EXISTING_ID);
+        $this->repository->update($newData, $this->getRandomUuid());
     }
 
     /**

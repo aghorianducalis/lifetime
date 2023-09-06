@@ -12,12 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('resources', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->double('amount');
-            $table->unsignedBigInteger('resource_type_id');
-            $table->foreign('resource_type_id')->references('id')->on('resource_types')->onDelete('restrict');
-            $table->unsignedBigInteger('event_id');
-            $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
+            $table->foreignUuid('resource_type_id')->references('id')->on('resource_types')->onDelete('restrict');
+            $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->timestamps();
         });
     }

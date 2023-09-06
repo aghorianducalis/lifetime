@@ -15,12 +15,12 @@ class ResourceTypeService
         $this->resourceTypeRepository = $resourceTypeRepository;
     }
 
-    public function getResourceTypeById($id)
+    public function getResourceTypeById(string $id)
     {
         return $this->resourceTypeRepository->find($id);
     }
 
-    public function getResourceTypesByUser(?int $userId): Collection
+    public function getResourceTypesByUser(?string $userId): Collection
     {
         return $this->resourceTypeRepository->findByUser($userId);
     }
@@ -35,12 +35,12 @@ class ResourceTypeService
         return $this->resourceTypeRepository->create($data);
     }
 
-    public function updateResourceType(array $data, $id)
+    public function updateResourceType(array $data, string $id)
     {
         return $this->resourceTypeRepository->update($data, $id);
     }
 
-    public function deleteResourceType($id): bool
+    public function deleteResourceType(string $id): bool
     {
         return $this->resourceTypeRepository->delete($id);
     }

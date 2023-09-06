@@ -37,10 +37,10 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $eventId
+     * @param string $eventId
      * @return \App\Http\Resources\EventResource
      */
-    public function show(int $eventId, EventService $service)
+    public function show(string $eventId, EventService $service)
     {
         $event = $service->getEventById($eventId);
 
@@ -51,10 +51,10 @@ class EventController extends Controller
      * Update the specified resource in storage.
      *
      * @param \App\Http\Requests\UpdateEventRequest $request
-     * @param int $eventId
+     * @param string $eventId
      * @return \App\Http\Resources\EventResource
      */
-    public function update(UpdateEventRequest $request, int $eventId, EventService $service)
+    public function update(UpdateEventRequest $request, string $eventId, EventService $service)
     {
         $event = $service->updateEvent($request->validated(), $eventId);
 
@@ -64,10 +64,10 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $eventId
+     * @param string $eventId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $eventId, EventService $service)
+    public function destroy(string $eventId, EventService $service)
     {
         $result = $service->deleteEvent($eventId);
 
