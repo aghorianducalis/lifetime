@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('coordinates', function (Blueprint $table) {
             $table->id();
-            $table->float('x');
-            $table->float('y');
-            $table->float('z');
+            $table->decimal('x', 14, 6);
+            $table->decimal('y', 14, 6);
+            $table->decimal('z', 14, 6);
             $table->datetime('t');
             $table->timestamps();
         });

@@ -23,7 +23,7 @@ class ResourceTypeRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new ResourceTypeRepository();
+        $this->repository = app(ResourceTypeRepository::class);
     }
 
     /**

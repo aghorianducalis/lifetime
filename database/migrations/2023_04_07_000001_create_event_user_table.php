@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coordinate_event', function (Blueprint $table) {
+        Schema::create('event_user', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('coordinate_id')->nullable();
-            $table->foreign('coordinate_id')->references('id')->on('coordinates')->onDelete('set null');
             $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade');
-            $table->timestamps();
+            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coordinate_event');
+        Schema::dropIfExists('event_user');
     }
 };

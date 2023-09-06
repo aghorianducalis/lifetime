@@ -31,7 +31,7 @@ class ResourceTypeFactory extends Factory
         ];
     }
 
-    public function forUser(User $user = null): Factory
+    public function forUser(User $user = null): static
     {
         $user = $user ?: User::factory()->create();
 

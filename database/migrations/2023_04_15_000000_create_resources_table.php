@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->double('amount');
+            $table->decimal('amount', 10, 4);
             $table->foreignUuid('resource_type_id')->references('id')->on('resource_types')->onDelete('restrict');
-            $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->timestamps();
         });
     }

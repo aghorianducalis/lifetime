@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
  * @property string $description
  * @property $created_at
  * @property $updated_at
+ * @property-read Collection|Resource[]|array $resources
  * @property-read Collection|User[]|array $users
  */
 class ResourceType extends Model

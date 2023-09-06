@@ -97,7 +97,7 @@ class ResourceTypeServiceTest extends TestCase
         $this->assertEquals($data['description'], $resourceType->description);
         $this->assertDatabaseHas($resourceType->getTable(), [
             'title'       => $data['title'],
-            'description' => $data['description']
+            'description' => $data['description'],
         ]);
     }
 
@@ -118,7 +118,7 @@ class ResourceTypeServiceTest extends TestCase
         $this->assertDatabaseHas($resourceType->getTable(), [
             'id'          => $resourceType->id,
             'title'       => $newData['title'],
-            'description' => $newData['description']
+            'description' => $newData['description'],
         ]);
     }
 

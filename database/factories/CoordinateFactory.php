@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Coordinate;
-use App\Models\Event;
 use App\Models\Location;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,11 +26,33 @@ class CoordinateFactory extends Factory
      */
     public function definition(): array
     {
+        $min = -99999999.999999;
+        $max = 99999999.999999;
+
         return [
-            'x'           => fake()->randomFloat(),
-            'y'           => fake()->randomFloat(),
-            'z'           => fake()->randomFloat(),
-            't'           => fake()->dateTime(),
+            'x' => fake()->randomFloat(14, $min, $max),
+            'y' => fake()->randomFloat(14, $min, $max),
+            'z' => fake()->randomFloat(14, $min, $max),
+            't' => fake()->dateTime(),
         ];
+    }
+
+    public function withLocation(Location $location = null): static
+    {
+        $location = $location ?: Location::factory()->create();
+
+        return $this->afterCreating(function (Coordinate $coordinate) use ($location) {
+            $coordinate->location()->save($location);
+            $coordinate->save();
+        });
+    }
+
+    public function forUser(User $user = null): static
+    {
+        $user = $user ?: User::factory()->create();
+
+        return $this->afterCreating(function (Coordinate $coordinate) use ($user) {
+            $coordinate->users()->attach($user);
+        });
     }
 }
