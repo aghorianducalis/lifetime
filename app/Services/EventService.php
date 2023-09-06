@@ -15,7 +15,7 @@ class EventService
         $this->repository = $eventRepository;
     }
 
-    public function getEventById($id)
+    public function getEventById(string $id)
     {
         return $this->repository->find($id);
     }
@@ -30,12 +30,12 @@ class EventService
         return $this->repository->create($data);
     }
 
-    public function updateEvent(array $data, $id)
+    public function updateEvent(array $data, string $id)
     {
         return $this->repository->update($data, $id);
     }
 
-    public function deleteEvent($id): bool
+    public function deleteEvent(string $id): bool
     {
         return $this->repository->delete($id);
     }

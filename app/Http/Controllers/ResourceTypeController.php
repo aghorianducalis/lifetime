@@ -39,10 +39,10 @@ class ResourceTypeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $resourceTypeId
+     * @param string $resourceTypeId
      * @return \App\Http\Resources\ResourceTypeResource
      */
-    public function show(int $resourceTypeId, ResourceTypeService $service)
+    public function show(string $resourceTypeId, ResourceTypeService $service)
     {
         $resourceType = $service->getResourceTypeById($resourceTypeId);
 
@@ -53,10 +53,10 @@ class ResourceTypeController extends Controller
      * Update the specified resource in storage.
      *
      * @param \App\Http\Requests\UpdateResourceTypeRequest $request
-     * @param int $resourceTypeId
+     * @param string $resourceTypeId
      * @return \App\Http\Resources\ResourceTypeResource
      */
-    public function update(UpdateResourceTypeRequest $request, int $resourceTypeId, ResourceTypeService $service)
+    public function update(UpdateResourceTypeRequest $request, string $resourceTypeId, ResourceTypeService $service)
     {
         $resourceType = $service->updateResourceType($request->validated(), $resourceTypeId);
 
@@ -66,10 +66,10 @@ class ResourceTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $resourceTypeId
+     * @param string $resourceTypeId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $resourceTypeId, ResourceTypeService $service)
+    public function destroy(string $resourceTypeId, ResourceTypeService $service)
     {
         $result = $service->deleteResourceType($resourceTypeId);
 

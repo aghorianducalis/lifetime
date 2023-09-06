@@ -39,10 +39,10 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $locationId
+     * @param string $locationId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(int $locationId)
+    public function show(string $locationId)
     {
         /** @var Location $location */
         $location = Location::query()->findOrFail($locationId);
@@ -54,10 +54,10 @@ class LocationController extends Controller
      * Update the specified resource in storage.
      *
      * @param \App\Http\Requests\UpdateLocationRequest $request
-     * @param int $locationId
+     * @param string $locationId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateLocationRequest $request, int $locationId)
+    public function update(UpdateLocationRequest $request, string $locationId)
     {
         /** @var Location $location */
         $location = Location::query()->findOrFail($locationId);
@@ -70,10 +70,10 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $locationId
+     * @param string $locationId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $locationId)
+    public function destroy(string $locationId)
     {
         /** @var Location $location */
         $location = Location::query()->findOrFail($locationId);

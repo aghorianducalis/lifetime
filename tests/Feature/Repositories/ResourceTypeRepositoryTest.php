@@ -50,7 +50,7 @@ class ResourceTypeRepositoryTest extends TestCase
     {
         $this->expectException(ModelNotFoundException::class);
 
-        $this->repository->find(self::NON_EXISTING_ID);
+        $this->repository->find($this->getRandomUuid());
     }
 
     /**
@@ -129,7 +129,7 @@ class ResourceTypeRepositoryTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
 
         $newData = ResourceType::factory()->make()->toArray();
-        $this->repository->update($newData, self::NON_EXISTING_ID);
+        $this->repository->update($newData, $this->getRandomUuid());
     }
 
     /**

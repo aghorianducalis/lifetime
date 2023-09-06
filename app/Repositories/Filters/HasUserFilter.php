@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class HasUserFilter implements FilterInterface
 {
-    protected ?int $userId;
+    protected ?string $userId;
 
-    public function __construct(?int $userId)
+    public function __construct(?string $userId)
     {
         $this->userId = $userId;
     }

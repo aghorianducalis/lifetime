@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int $id
+ * @property string $id
  * @property double $amount
- * @property int $resource_type_id
- * @property int $event_id
+ * @property string $resource_type_id
+ * @property string $event_id
  * @property $started_at
  * @property $ended_at
  * @property-read ResourceType $resourceType
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Resource extends Model
 {
     use HasFactory;
+    use HasUuids;
 
     protected $table = 'resources';
 

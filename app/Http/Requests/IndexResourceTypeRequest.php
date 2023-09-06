@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * @property int|null $user_id
+ * @property string|null $user_id
  */
 class IndexResourceTypeRequest extends FormRequest
 {
