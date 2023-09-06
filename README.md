@@ -1,66 +1,218 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Lifetime Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+The Lifetime Management System is a web application built with Laravel that allows users to manage their Lifetime. The goal of this project is to create a user-friendly interface REST API for creating, editing, deleting, and viewing events. Users can create, edit, delete, and view events. Each event includes a title, description.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- User Registration and Authentication
+- Create, Edit, Delete, and View Events
+- Validation for Task Creation and Updates
+- Authorization: Users can only manage their events
+- API Controller (Temporarily using Blade Templates)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation and Setup
 
-## Learning Laravel
+1. Requirements
+   <br><br>
+   Before starting work on the project, ensure that you have the following components installed:
+   - PHP
+   - Composer
+   - Node.js and npm
+   - MySQL
+   - Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+   Make sure the following components are installed on your system:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+   - Docker: [Docker installation instructions](https://docs.docker.com/get-docker/)
+   - Docker Compose: [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. Clone the repository to your local machine:
+   ```shell
+   git clone https://github.com/aghorianducalis/lifetime.git
+   cd lifetime
+   ```
+3. Set up environment:
+   <br><br>
+   Copy the `.env.example` to `.env` and set the environment values.
 
-## Laravel Sponsors
+   Configure database access and other necessary parameters. Set up your database in the `.env` file:
+   ```shell
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_database_username
+   DB_PASSWORD=your_database_password
+   ```
+   
+4. Build and run the project:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+   Use Docker Compose to build and start your project:
+   ```
+   docker-compose up -d
+   ```
+   This command will start the containers in detached mode. <br><br>
+5. Access your project:
 
-### Premium Partners
+   Once the containers are up and running, you can access your project at http://localhost or another specified address.
+   Now you can get into the app container:
+   ```
+   docker exec -it app sh
+   ```
+   Laravel artisan commands are available inside the container. I.e. generate an application key:
+   ```
+   php artisan key:generate
+   ```
+   
+6. TODO update this section 
+7. Install composer dependencies:
+```shell
+composer install
+```
+Run database migrations:
+```shell
+php artisan migrate
+```
+Install JavaScript dependencies:
+```shell
+npm install
+```
+In another terminal, run Vite for frontend development:
+```shell
+npm run dev
+```
+Set up Laravel authentication:
+```shell
+php artisan make:auth
+```
+Start the development server:
+```shell
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Now, you can open a web browser and navigate to http://localhost:8000 to view your project.
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Usage
 
-## Code of Conduct
+Once you have started the Artisan development server, your application will be accessible in your web browser at http://localhost:8000.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+After installing and configuring the project, you can:
+
+Register, log in, and log out.
+
+## Authentication
+
+The Lifetime Management System includes user registration and authentication. Users can sign up, log in, and log out. Only authenticated users can create, edit, delete, and view their events.
+
+## Testing
+
+The application includes PHPUnit tests to ensure functionality and authorization are working as expected. Run the tests with the following command:
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within application, please send an e-mail to developer via [aghorianducalis@gmail.com](mailto:aghorianducalis@gmail.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+###########################################################################
+
+## Local Setup
+
+Install [Docker](https://www.docker.com/products/docker-desktop)
+
+Install [Git](https://git-scm.com/downloads)
+
+Clone this repository
+
+```
+  git clone git@github.com:aghorianducalis/lifetime.git
+  cd lifetime
+```
+
+Copy environment template file
+```
+  cp -n .env.example .env
+```
+
+Setup docker containers(and keep it works in background)
+```
+  docker-compose up -d
+```
+
+Copy DB dump file **dump.sql** to **/docker/mysql/data**
+
+Enter into **db** container
+```
+  docker-compose exec db bash 
+```
+
+Then, there:
+
+```
+  mysql -uroot -proot lifetime_db < /var/lib/mysql/dump.sql
+```
+
+Enter into **app** container (Main container with php application)
+```
+  docker-compose exec app bash
+```
+
+To rebuild docker containers use command:
+```
+  docker-compose up --build -d
+```
+To see logs:
+```
+  docker-compose logs
+```
+
+#### All next operations should be executed inside container:
+
+```
+  composer install
+```
+
+Execute laravel preparations commands:
+```
+  php artisan key:generate
+
+  php artisan storage:link
+```
+
+Setup file access rules at storage folder(cache, logs and user files)
+```
+  chmod -R o+w storage
+```
+
+## Containers and services
+
+### Php-application
+
+There you can find codebase and PHP-fpm
+
+Outside accessible via:
+
+```
+  docker-compose exec app bash
+```
+
+### Nginx
+
+https://localhost:8897 - for local development (not used due to problems)
+
+http://localhost:8896 - version without ssl
+
+### MySQL
+
+Accessible from outside via port 33061.
+
+Connecting to mysql from host system:
+
+```
+  docker-compose exec db mysql -uroot -proot lifetime_db
+```
