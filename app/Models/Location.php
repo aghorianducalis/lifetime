@@ -26,6 +26,7 @@ class Location extends Model
     protected $fillable = [
         'title',
         'description',
+        'coordinate_id',
     ];
 
     /**
@@ -35,6 +36,6 @@ class Location extends Model
      */
     public function coordinate(): BelongsTo
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Coordinate::class);
     }
 }

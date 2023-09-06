@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,8 +26,17 @@ class EventFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'        => 'Event #' . fake()->randomNumber() . ' ' . fake()->sentence(5),
-            'description'  => fake()->text(),
+            'title'       => 'Event #' . fake()->randomNumber() . ' ' . fake()->sentence(5),
+            'description' => fake()->text(),
         ];
+    }
+
+    public function forUser(User $user = null): Factory
+    {
+        $user = $user ?: User::factory()->create();
+
+        return $this->afterCreating(function (Event $event) use ($user) {
+            $event->users()->attach($user);
+        });
     }
 }

@@ -23,7 +23,7 @@ class EventServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $eventRepository = new EventRepository();
+        $eventRepository = app(EventRepository::class);
         $this->service = new EventService($eventRepository);
     }
 

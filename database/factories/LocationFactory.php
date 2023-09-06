@@ -27,7 +27,7 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'         => fake()->unique()->sentence(),
+            'title'         => "Location #" . fake()->randomNumber() . " " . fake()->unique()->sentence(),
             'description'   => fake()->text(),
             'coordinate_id' => Coordinate::factory()->create(['t' => Carbon::parse(0)->toDateTimeString()]),
         ];

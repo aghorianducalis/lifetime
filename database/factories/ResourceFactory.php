@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Event;
 use App\Models\Resource;
 use App\Models\ResourceType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,9 +27,17 @@ class ResourceFactory extends Factory
     public function definition(): array
     {
         return [
-            'amount'           => fake()->randomFloat(),
-            'event_id'         => Event::factory(),
+            'amount'           => fake()->randomFloat(10, 0, 999999.9999),
             'resource_type_id' => ResourceType::factory(),
         ];
+    }
+
+    public function forUser(User $user = null): static
+    {
+        $user = $user ?: User::factory()->create();
+
+        return $this->afterCreating(function (Resource $resource) use ($user) {
+            $resource->users()->attach($user);
+        });
     }
 }

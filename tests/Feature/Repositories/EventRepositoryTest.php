@@ -20,7 +20,7 @@ class EventRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new EventRepository();
+        $this->repository = app(EventRepository::class);
     }
 
     /**

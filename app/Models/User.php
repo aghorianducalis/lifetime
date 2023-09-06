@@ -15,6 +15,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $id
  * @property string $name
  * @property string $email
+ * @property-read Collection|Coordinate[]|array $coordinates
+ * @property-read Collection|Event[]|array $events
+ * @property-read Collection|Resource[]|array $resources
  * @property-read Collection|ResourceType[]|array $resourceTypes
  */
 class User extends Authenticatable
@@ -53,6 +56,30 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The coordinates that belong to the user.
+     */
+    public function coordinates(): BelongsToMany
+    {
+        return $this->belongsToMany(Coordinate::class, 'coordinate_user', 'user_id', 'coordinate_id');
+    }
+
+    /**
+     * The events that belong to the user.
+     */
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'event_user', 'user_id', 'event_id');
+    }
+
+    /**
+     * The resources that are related to the event.
+     */
+    public function resources(): BelongsToMany
+    {
+        return $this->belongsToMany(Resource::class, 'resource_user', 'user_id', 'resource_id');
+    }
 
     /**
      * The resource types that belong to the user.

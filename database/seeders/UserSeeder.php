@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = User::factory()
+            ->withEvents(100)
             ->withResourceTypes(100)
             ->count(10)
             ->create();
