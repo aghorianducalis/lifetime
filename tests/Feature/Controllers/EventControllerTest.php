@@ -29,7 +29,6 @@ class EventControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
-
     /**
      * @test
      * @covers ::store
@@ -43,7 +42,6 @@ class EventControllerTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonFragment($eventData);
     }
-
 
     /**
      * @test
@@ -59,7 +57,6 @@ class EventControllerTest extends TestCase
             ->assertJsonFragment(['id' => $event->id]);
     }
 
-
     /**
      * @test
      * @covers ::update
@@ -67,14 +64,16 @@ class EventControllerTest extends TestCase
     public function testUpdate()
     {
         $event = Event::factory()->create();
-        $updatedData = ['title' => 'Updated Title', 'description' => 'Updated Description'];
+        $updatedData = Event::factory()->make()->only([
+            'title',
+            'description',
+        ]);
 
         $response = $this->putJson(route('events.update', $event->id), $updatedData);
 
         $response->assertStatus(200)
             ->assertJsonFragment($updatedData);
     }
-
 
     /**
      * @test

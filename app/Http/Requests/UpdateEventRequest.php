@@ -5,6 +5,10 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * @property string $title
+ * @property string $description
+ */
 class UpdateEventRequest extends FormRequest
 {
     /**

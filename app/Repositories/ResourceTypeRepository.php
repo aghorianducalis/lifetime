@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class ResourceTypeRepository extends EloquentRepository implements ResourceTypeRepositoryInterface
 {
-    public function findByTitle(string $title)
+    public function findByTitle(string $title): Collection
     {
         $criteria = new Criteria;
         $criteria->push(new TitleFilter($title));

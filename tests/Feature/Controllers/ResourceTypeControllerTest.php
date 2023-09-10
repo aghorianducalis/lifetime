@@ -29,7 +29,6 @@ class ResourceTypeControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
-
     /**
      * @test
      * @covers ::store
@@ -43,7 +42,6 @@ class ResourceTypeControllerTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonFragment($resourceTypeData);
     }
-
 
     /**
      * @test
@@ -59,7 +57,6 @@ class ResourceTypeControllerTest extends TestCase
             ->assertJsonFragment(['id' => $resourceType->id]);
     }
 
-
     /**
      * @test
      * @covers ::update
@@ -67,14 +64,16 @@ class ResourceTypeControllerTest extends TestCase
     public function testUpdate()
     {
         $resourceType = ResourceType::factory()->create();
-        $updatedData = ['title' => 'Updated Title', 'description' => 'Updated Description'];
+        $updatedData = ResourceType::factory()->make()->only([
+            'title',
+            'description',
+        ]);
 
         $response = $this->putJson(route('resource-types.update', $resourceType->id), $updatedData);
 
         $response->assertStatus(200)
             ->assertJsonFragment($updatedData);
     }
-
 
     /**
      * @test

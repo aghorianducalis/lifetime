@@ -27,7 +27,7 @@ class ResourceFactory extends Factory
     public function definition(): array
     {
         return [
-            'amount'           => fake()->randomFloat(10, 0, 999999.9999),
+            'amount'           => fake()->randomFloat(10, 0, Resource::MAX_AMOUNT),
             'resource_type_id' => ResourceType::factory(),
         ];
     }

@@ -15,7 +15,7 @@ class LocationService
         $this->locationRepository = $locationRepository;
     }
 
-    public function getLocationById(string $id)
+    public function getLocationById(string $id): Location
     {
         return $this->locationRepository->find($id);
     }
@@ -30,7 +30,7 @@ class LocationService
         return $this->locationRepository->create($data);
     }
 
-    public function updateLocation(array $data, string $id)
+    public function updateLocation(array $data, string $id): Location
     {
         return $this->locationRepository->update($data, $id);
     }

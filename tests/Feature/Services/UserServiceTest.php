@@ -82,7 +82,11 @@ class UserServiceTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $newData = User::factory()->make()->toArray();
+        /** @var User $newUser */
+        $newUser = User::factory()->make();
+        $newUser->makeVisible($newUser->getAttributes());
+        $newData = $newUser->getAttributes();
+        $newData['email_verified_at'] = $newData['email_verified_at']->toDateTimeString();
 
         $updatedUser = $this->service->updateUser($newData, $user->id);
 

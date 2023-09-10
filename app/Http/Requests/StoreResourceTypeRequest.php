@@ -4,6 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property string $title
+ * @property string $description
+ */
 class StoreResourceTypeRequest extends FormRequest
 {
     /**

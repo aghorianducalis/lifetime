@@ -8,40 +8,40 @@ use Illuminate\Support\Collection;
 
 class ResourceTypeService
 {
-    protected ResourceTypeRepositoryInterface $resourceTypeRepository;
+    protected ResourceTypeRepositoryInterface $repository;
 
-    public function __construct(ResourceTypeRepositoryInterface $resourceTypeRepository)
+    public function __construct(ResourceTypeRepositoryInterface $repository)
     {
-        $this->resourceTypeRepository = $resourceTypeRepository;
+        $this->repository = $repository;
     }
 
-    public function getResourceTypeById(string $id)
+    public function getResourceTypeById(string $id): ResourceType
     {
-        return $this->resourceTypeRepository->find($id);
+        return $this->repository->find($id);
     }
 
     public function getResourceTypesByUser(?string $userId): Collection
     {
-        return $this->resourceTypeRepository->findByUser($userId);
+        return $this->repository->findByUser($userId);
     }
 
     public function getAllResourceTypes(): Collection
     {
-        return $this->resourceTypeRepository->matching();
+        return $this->repository->matching();
     }
 
     public function createResourceType(array $data): ResourceType
     {
-        return $this->resourceTypeRepository->create($data);
+        return $this->repository->create($data);
     }
 
-    public function updateResourceType(array $data, string $id)
+    public function updateResourceType(array $data, string $id): ResourceType
     {
-        return $this->resourceTypeRepository->update($data, $id);
+        return $this->repository->update($data, $id);
     }
 
     public function deleteResourceType(string $id): bool
     {
-        return $this->resourceTypeRepository->delete($id);
+        return $this->repository->delete($id);
     }
 }

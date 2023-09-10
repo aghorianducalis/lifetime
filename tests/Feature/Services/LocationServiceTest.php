@@ -3,8 +3,6 @@
 namespace Tests\Feature\Services;
 
 use App\Models\Location;
-use App\Models\User;
-use App\Repositories\Interfaces\LocationRepositoryInterface;
 use App\Services\LocationService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;

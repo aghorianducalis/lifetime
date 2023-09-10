@@ -15,7 +15,7 @@ class CoordinateService
         $this->coordinateRepository = $coordinateRepository;
     }
 
-    public function getCoordinateById(int $id)
+    public function getCoordinateById(int $id): Coordinate
     {
         return $this->coordinateRepository->find($id);
     }
@@ -35,7 +35,7 @@ class CoordinateService
         return $this->coordinateRepository->create($data);
     }
 
-    public function updateCoordinate(array $data, int $id)
+    public function updateCoordinate(array $data, int $id): Coordinate
     {
         return $this->coordinateRepository->update($data, $id);
     }

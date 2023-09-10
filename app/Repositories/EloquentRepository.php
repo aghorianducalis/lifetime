@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Repositories\Filters\Criteria;
 use App\Repositories\Interfaces\RepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 abstract class EloquentRepository implements RepositoryInterface
@@ -18,17 +19,17 @@ abstract class EloquentRepository implements RepositoryInterface
         return $query->get();
     }
 
-    public function find($id)
+    public function find($id): Model
     {
         return $this->query()->findOrFail($id);
     }
 
-    public function create(array $data)
+    public function create(array $data): Model
     {
         return $this->query()->create($data);
     }
 
-    public function update(array $data, $id)
+    public function update(array $data, $id): Model
     {
         $model = $this->find($id);
         $model->update($data);
