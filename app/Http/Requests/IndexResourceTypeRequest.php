@@ -26,7 +26,8 @@ class IndexResourceTypeRequest extends FormRequest
     {
         return [
             'user_id' => [
-                'in:users',
+                'uuid',
+                'exists:users,id',
             ],
         ];
     }

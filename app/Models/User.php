@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $id
  * @property string $name
  * @property string $email
+ * @property Carbon|string $email_verified_at
  * @property-read Collection|Coordinate[]|array $coordinates
  * @property-read Collection|Event[]|array $events
  * @property-read Collection|Resource[]|array $resources
@@ -54,7 +56,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

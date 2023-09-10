@@ -99,7 +99,7 @@ class CoordinateRepositoryTest extends TestCase
         $this->assertEquals($data['x'], $coordinate->x);
         $this->assertEquals($data['y'], $coordinate->y);
         $this->assertEquals($data['z'], $coordinate->z);
-        $this->assertEquals($data['t'], $coordinate->t->toISOString());
+        $this->assertEquals($data['t'], $coordinate->t);
         $this->assertDatabaseHas($coordinate->getTable(), [
             'x' => $data['x'],
             'y' => $data['y'],
@@ -136,7 +136,7 @@ class CoordinateRepositoryTest extends TestCase
         $this->assertEquals($newData['x'], $updatedCoordinate->x);
         $this->assertEquals($newData['y'], $updatedCoordinate->y);
         $this->assertEquals($newData['z'], $updatedCoordinate->z);
-        $this->assertEquals($newData['t'], $updatedCoordinate->t->toISOString());
+        $this->assertEquals($newData['t'], $updatedCoordinate->t);
         $this->assertDatabaseHas($coordinate->getTable(), [
             'id' => $coordinate->id,
             'x'  => $newData['x'],

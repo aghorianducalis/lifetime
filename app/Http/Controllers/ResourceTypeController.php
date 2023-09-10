@@ -13,6 +13,8 @@ class ResourceTypeController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param \App\Http\Requests\IndexResourceTypeRequest $request
+     * @param \App\Services\ResourceTypeService $service
      * @return \App\Http\Resources\ResourceTypeCollection
      */
     public function index(IndexResourceTypeRequest $request, ResourceTypeService $service)
@@ -26,6 +28,7 @@ class ResourceTypeController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \App\Http\Requests\StoreResourceTypeRequest $request
+     * @param \App\Services\ResourceTypeService $service
      * @return \App\Http\Resources\ResourceTypeResource
      */
     public function store(StoreResourceTypeRequest $request, ResourceTypeService $service)
@@ -33,13 +36,13 @@ class ResourceTypeController extends Controller
         $resourceType = $service->createResourceType($request->validated());
 
         return new ResourceTypeResource($resourceType);
-        return response()->json($resourceType, Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
      * @param string $resourceTypeId
+     * @param \App\Services\ResourceTypeService $service
      * @return \App\Http\Resources\ResourceTypeResource
      */
     public function show(string $resourceTypeId, ResourceTypeService $service)
@@ -54,6 +57,7 @@ class ResourceTypeController extends Controller
      *
      * @param \App\Http\Requests\UpdateResourceTypeRequest $request
      * @param string $resourceTypeId
+     * @param \App\Services\ResourceTypeService $service
      * @return \App\Http\Resources\ResourceTypeResource
      */
     public function update(UpdateResourceTypeRequest $request, string $resourceTypeId, ResourceTypeService $service)
@@ -67,6 +71,7 @@ class ResourceTypeController extends Controller
      * Remove the specified resource from storage.
      *
      * @param string $resourceTypeId
+     * @param \App\Services\ResourceTypeService $service
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(string $resourceTypeId, ResourceTypeService $service)

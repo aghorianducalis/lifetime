@@ -27,6 +27,9 @@ class Coordinate extends Model
 {
     use HasFactory;
 
+    public const MIN_VALUE = -99999999.999999;
+    public const MAX_VALUE = 99999999.999999;
+
     protected $table = 'coordinates';
 
     protected $fillable = [
@@ -39,10 +42,10 @@ class Coordinate extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
-        't' => 'datetime',
+        't' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

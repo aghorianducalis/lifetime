@@ -15,7 +15,7 @@ class ResourceService
         $this->resourceRepository = $resourceRepository;
     }
 
-    public function getResourceById(string $id)
+    public function getResourceById(string $id): Resource
     {
         return $this->resourceRepository->find($id);
     }
@@ -35,7 +35,7 @@ class ResourceService
         return $this->resourceRepository->create($data);
     }
 
-    public function updateResource(array $data, string $id)
+    public function updateResource(array $data, string $id): Resource
     {
         return $this->resourceRepository->update($data, $id);
     }

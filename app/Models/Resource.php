@@ -25,6 +25,8 @@ class Resource extends Model
     use HasFactory;
     use HasUuids;
 
+    public const MAX_AMOUNT = 999999.9999;
+
     protected $table = 'resources';
 
     protected $fillable = [

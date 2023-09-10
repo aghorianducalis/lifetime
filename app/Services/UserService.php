@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -15,7 +16,7 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function getUserById(string $id)
+    public function getUserById(string $id): User
     {
         return $this->userRepository->find($id);
     }
@@ -27,11 +28,17 @@ class UserService
 
     public function createUser(array $data): User
     {
+        $password = Hash::make($data['password']);
+        $data['password'] = $password;
+
         return $this->userRepository->create($data);
     }
 
-    public function updateUser(array $data, string $id)
+    public function updateUser(array $data, string $id): User
     {
+        $password = Hash::make($data['password']);
+        $data['password'] = $password;
+
         return $this->userRepository->update($data, $id);
     }
 

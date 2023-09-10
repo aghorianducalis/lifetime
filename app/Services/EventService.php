@@ -10,12 +10,12 @@ class EventService
 {
     protected EventRepositoryInterface $repository;
 
-    public function __construct(EventRepositoryInterface $eventRepository)
+    public function __construct(EventRepositoryInterface $repository)
     {
-        $this->repository = $eventRepository;
+        $this->repository = $repository;
     }
 
-    public function getEventById(string $id)
+    public function getEventById(string $id): Event
     {
         return $this->repository->find($id);
     }
@@ -30,7 +30,7 @@ class EventService
         return $this->repository->create($data);
     }
 
-    public function updateEvent(array $data, string $id)
+    public function updateEvent(array $data, string $id): Event
     {
         return $this->repository->update($data, $id);
     }

@@ -3,7 +3,13 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
+/**
+ * @property string $title
+ * @property string $description
+ * @property int $coordinate_id
+ */
 class UpdateLocationRequest extends FormRequest
 {
     /**
@@ -26,12 +32,17 @@ class UpdateLocationRequest extends FormRequest
                 'required',
                 'min:0',
                 'max:255',
-                'unique:locations,title',  // todo except current id
+                Rule::unique('locations', 'title')->ignore($this->route('id')),
             ],
             'description' => [
                 'required',
                 'min:0',
                 'max:10000',
+            ],
+            'coordinate_id' => [
+                'required',
+                'int',
+                'exists:coordinates,id',
             ],
         ];
     }

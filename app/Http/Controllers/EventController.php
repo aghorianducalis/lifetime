@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexEventRequest;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
@@ -12,9 +13,11 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param \App\Http\Requests\IndexEventRequest $request
+     * @param \App\Services\EventService $service
      * @return \App\Http\Resources\EventCollection
      */
-    public function index(EventService $service)
+    public function index(IndexEventRequest $request, EventService $service)
     {
         $events = $service->getAllEvents();
 
@@ -25,6 +28,7 @@ class EventController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \App\Http\Requests\StoreEventRequest $request
+     * @param \App\Services\EventService $service
      * @return \App\Http\Resources\EventResource
      */
     public function store(StoreEventRequest $request, EventService $service)
@@ -38,6 +42,7 @@ class EventController extends Controller
      * Display the specified resource.
      *
      * @param string $eventId
+     * @param \App\Services\EventService $service
      * @return \App\Http\Resources\EventResource
      */
     public function show(string $eventId, EventService $service)
@@ -52,6 +57,7 @@ class EventController extends Controller
      *
      * @param \App\Http\Requests\UpdateEventRequest $request
      * @param string $eventId
+     * @param \App\Services\EventService $service
      * @return \App\Http\Resources\EventResource
      */
     public function update(UpdateEventRequest $request, string $eventId, EventService $service)
@@ -65,6 +71,7 @@ class EventController extends Controller
      * Remove the specified resource from storage.
      *
      * @param string $eventId
+     * @param \App\Services\EventService $service
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(string $eventId, EventService $service)

@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property string $title
+ * @property string $description
+ * @property int $coordinate_id
+ */
 class StoreLocationRequest extends FormRequest
 {
     /**
@@ -32,6 +37,11 @@ class StoreLocationRequest extends FormRequest
                 'required',
                 'min:0',
                 'max:10000',
+            ],
+            'coordinate_id' => [
+                'required',
+                'int',
+                'exists:coordinates,id',
             ],
         ];
     }

@@ -2,52 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexLocationRequest;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
-use App\Models\Location;
-use Illuminate\Http\Response;
+use App\Http\Resources\LocationResource;
+use App\Services\LocationService;
 
 class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param \App\Http\Requests\IndexLocationRequest $request
+     * @param \App\Services\LocationService $service
+     * @return \App\Http\Resources\LocationCollection
      */
-    public function index()
+    public function index(IndexLocationRequest $request, LocationService $service)
     {
-        /** @var \Illuminate\Database\Eloquent\Collection $locations */
-        $locations = Location::query()->get();
+        $locations = $service->getAllLocations();
 
-        return response()->json($locations);
+        return LocationResource::collection($locations);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param \App\Http\Requests\StoreLocationRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param \App\Services\LocationService $service
+     * @return \App\Http\Resources\LocationResource
      */
-    public function store(StoreLocationRequest $request)
+    public function store(StoreLocationRequest $request, LocationService $service)
     {
-        /** @var Location $location */
-        $location = Location::query()->create($request->validated());
+        $location = $service->createLocation($request->validated());
 
-        return response()->json($location, Response::HTTP_CREATED);
+        return new LocationResource($location);
     }
 
     /**
      * Display the specified resource.
      *
      * @param string $locationId
-     * @return \Illuminate\Http\JsonResponse
+     * @param \App\Services\LocationService $service
+     * @return \App\Http\Resources\LocationResource
      */
-    public function show(string $locationId)
+    public function show(string $locationId, LocationService $service)
     {
-        /** @var Location $location */
-        $location = Location::query()->findOrFail($locationId);
+        $location = $service->getLocationById($locationId);
 
-        return response()->json($location);
+        return new LocationResource($location);
     }
 
     /**
@@ -55,36 +57,27 @@ class LocationController extends Controller
      *
      * @param \App\Http\Requests\UpdateLocationRequest $request
      * @param string $locationId
-     * @return \Illuminate\Http\JsonResponse
+     * @param \App\Services\LocationService $service
+     * @return \App\Http\Resources\LocationResource
      */
-    public function update(UpdateLocationRequest $request, string $locationId)
+    public function update(UpdateLocationRequest $request, string $locationId, LocationService $service)
     {
-        /** @var Location $location */
-        $location = Location::query()->findOrFail($locationId);
+        $location = $service->updateLocation($request->validated(), $locationId);
 
-        $result = $location->update($request->validated());
-
-        return response()->json($result);
+        return new LocationResource($location);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param string $locationId
+     * @param \App\Services\LocationService $service
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(string $locationId)
+    public function destroy(string $locationId, LocationService $service)
     {
-        /** @var Location $location */
-        $location = Location::query()->findOrFail($locationId);
+        $result = $service->deleteLocation($locationId);
 
-        $result = false;
-
-        // todo check why this shit does not work in policy
-        if ($location->events->isEmpty()) {
-            $result = $location->delete();
-        }
-
-        return response()->json($result);
+        return response()->json(['result' => $result]);
     }
 }

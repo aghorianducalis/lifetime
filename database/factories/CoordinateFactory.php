@@ -26,13 +26,10 @@ class CoordinateFactory extends Factory
      */
     public function definition(): array
     {
-        $min = -99999999.999999;
-        $max = 99999999.999999;
-
         return [
-            'x' => fake()->randomFloat(14, $min, $max),
-            'y' => fake()->randomFloat(14, $min, $max),
-            'z' => fake()->randomFloat(14, $min, $max),
+            'x' => fake()->randomFloat(14, Coordinate::MIN_VALUE, Coordinate::MAX_VALUE),
+            'y' => fake()->randomFloat(14, Coordinate::MIN_VALUE, Coordinate::MAX_VALUE),
+            'z' => fake()->randomFloat(14, Coordinate::MIN_VALUE, Coordinate::MAX_VALUE),
             't' => fake()->dateTime(),
         ];
     }

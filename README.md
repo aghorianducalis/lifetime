@@ -216,3 +216,12 @@ Connecting to mysql from host system:
 ```
   docker-compose exec db mysql -uroot -proot lifetime_db
 ```
+
+```
+mysql -u root -p
+```
+#### Troubleshooting
+Force delete the /docker/mysql/data folder through your system command prompt:
+```bash
+sudo rm -fR /docker/mysql/data
+```
