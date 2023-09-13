@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -101,3 +103,10 @@ Route::namespace('users')
         Route::put('/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
+
+//     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+//                 ->middleware('guest')
+// // Route::post('/login', function(){
+//     // dd('func');
+// // })
+//                 ->name('login');

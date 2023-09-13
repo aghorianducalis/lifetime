@@ -43,6 +43,14 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+
+        'auth_group' => [
+            \App\Http\Middleware\Authenticate::class,
+            \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \App\Http\Middleware\RedirectIfAuthenticated::class,
+            \Illuminate\Auth\Middleware\RequirePassword::class,
+        ]
     ];
 
     /**
