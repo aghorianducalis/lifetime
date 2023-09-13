@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Repositories;
 
+use App\Models\Event;
 use App\Models\Resource;
 use App\Models\User;
 use App\Repositories\ResourceRepository;
@@ -28,7 +29,7 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::find
      */
-    public function testFind()
+    public function test_find()
     {
         /** @var Resource $resource */
         $resource = Resource::factory()->create();
@@ -44,10 +45,9 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::find
      */
-    public function testFindNonExistingResource()
+    public function test_find_non_existing_resource()
     {
         $this->expectException(ModelNotFoundException::class);
-
         $this->repository->find($this->getRandomUuid());
     }
 
@@ -55,13 +55,13 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::findByUser
      */
-    public function testFindByUser()
+    public function test_find_by_user()
     {
         /** @var User $user */
         $user = User::factory()->create();
 
         /** @var Resource $resource */
-        $resource = Resource::factory()->forUser($user)->create();
+        $resource = Resource::factory()->withUsers([$user->id])->create();
 
         $foundResources = $this->repository->findByUser($user->id);
         $this->assertCount(1, $foundResources);
@@ -74,7 +74,7 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::matching
      */
-    public function testGetAll()
+    public function test_get_all()
     {
         Resource::factory(5)->create();
 
@@ -87,18 +87,114 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::create
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = Resource::factory()->make()->toArray();
+        /** @var Resource $resource */
+        $resource = Resource::factory()->make();
 
-        $resource = $this->repository->create($data);
+        /** @var Resource $createdResource */
+        $createdResource = $this->repository->create($resource->toArray());
 
-        $this->assertInstanceOf(Resource::class, $resource);
-        $this->assertEquals($data['amount'], $resource->amount);
-        $this->assertEquals($data['resource_type_id'], $resource->resource_type_id);
+        $this->assertInstanceOf(Resource::class, $createdResource);
+        $this->assertEquals($resource->amount, $createdResource->amount);
+        $this->assertEquals($resource->resource_type_id, $createdResource->resource_type_id);
         $this->assertDatabaseHas($resource->getTable(), [
-            'amount'           => $data['amount'],
-            'resource_type_id' => $data['resource_type_id']
+            'amount'           => $resource->amount,
+            'resource_type_id' => $resource->resource_type_id,
+        ]);
+    }
+
+    /**
+     * @test
+     * @covers ::attachUsers
+     */
+    public function test_attach_users()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Resource $resource */
+        $resource = Resource::factory()->create();
+
+        $this->repository->attachUsers($resource, [$user->id]);
+
+        $this->assertCount(1, $user->resources);
+        $this->assertCount(1, $resource->users);
+        $this->assertEquals($resource->id, $user->resources()->first()->id);
+        $this->assertEquals($user->id, $resource->users()->first()->id);
+        $this->assertDatabaseHas($resource->users()->getTable(), [
+            'resource_id' => $resource->id,
+            'user_id'     => $user->id,
+        ]);
+    }
+
+    /**
+     * @test
+     * @covers ::detachUsers
+     */
+    public function test_detach_users()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Resource $resource */
+        $resource = Resource::factory()->withUsers([$user->id])->create();
+
+        $detachedUsersCount = $this->repository->detachUsers($resource, [$user->id]);
+
+        $this->assertEquals(1, $detachedUsersCount);
+        $this->assertCount(0, $user->resources);
+        $this->assertCount(0, $resource->users);
+        $this->assertDatabaseMissing($resource->users()->getTable(), [
+            'resource_id' => $resource->id,
+            'user_id'     => $user->id,
+        ]);
+    }
+
+    /**
+     * @test
+     * @covers ::attachEvents
+     */
+    public function test_attach_events()
+    {
+        /** @var Event $event */
+        $event = Event::factory()->create();
+
+        /** @var Resource $resource */
+        $resource = Resource::factory()->create();
+
+        $this->repository->attachEvents($resource, [$event->id]);
+
+        $this->assertCount(1, $event->resources);
+        $this->assertCount(1, $resource->events);
+        $this->assertEquals($resource->id, $event->resources()->first()->id);
+        $this->assertEquals($event->id, $resource->events()->first()->id);
+        $this->assertDatabaseHas($resource->events()->getTable(), [
+            'resource_id' => $resource->id,
+            'event_id'    => $event->id,
+        ]);
+    }
+
+    /**
+     * @test
+     * @covers ::detachEvents
+     */
+    public function test_detach_events()
+    {
+        /** @var Event $event */
+        $event = Event::factory()->create();
+
+        /** @var Resource $resource */
+        $resource = Resource::factory()->withEvents([$event->id])->create();
+
+        $detachedEventsCount = $this->repository->detachEvents($resource, [$event->id]);
+
+        $this->assertEquals(1, $detachedEventsCount);
+        $this->assertCount(0, $event->resources);
+        $this->assertCount(0, $resource->events);
+        $this->assertDatabaseMissing($resource->events()->getTable(), [
+            'resource_id' => $resource->id,
+            'event_id'    => $event->id,
         ]);
     }
 
@@ -106,11 +202,11 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdateNonExistingResource()
+    public function test_update_non_existing_resource()
     {
-        $this->expectException(ModelNotFoundException::class);
-
         $newData = Resource::factory()->make()->toArray();
+
+        $this->expectException(ModelNotFoundException::class);
         $this->repository->update($newData, $this->getRandomUuid());
     }
 
@@ -118,20 +214,23 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdate()
+    public function test_update()
     {
+        /** @var Resource $resource */
         $resource = Resource::factory()->create();
-        $newData = Resource::factory()->make()->toArray();
+        /** @var Resource $newResource */
+        $newResource = Resource::factory()->make();
 
-        $updatedResource = $this->repository->update($newData, $resource->id);
+        /** @var Resource $updatedResource */
+        $updatedResource = $this->repository->update($newResource->toArray(), $resource->id);
 
         $this->assertInstanceOf(Resource::class, $updatedResource);
-        $this->assertEquals($newData['amount'], $updatedResource->amount);
-        $this->assertEquals($newData['resource_type_id'], $updatedResource->resource_type_id);
+        $this->assertEquals($newResource->amount, $updatedResource->amount);
+        $this->assertEquals($newResource->resource_type_id, $updatedResource->resource_type_id);
         $this->assertDatabaseHas($resource->getTable(), [
             'id'               => $resource->id,
-            'amount'           => $newData['amount'],
-            'resource_type_id' => $newData['resource_type_id']
+            'amount'           => $newResource->amount,
+            'resource_type_id' => $newResource->resource_type_id,
         ]);
     }
 
@@ -139,16 +238,13 @@ class ResourceRepositoryTest extends TestCase
      * @test
      * @covers ::delete
      */
-    public function testDelete()
+    public function test_delete()
     {
         $resource = Resource::factory()->create();
 
         $result = $this->repository->delete($resource->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $foundResource = $this->repository->find($resource->id);
         $this->assertDatabaseMissing($resource->getTable(), [
             'id' => $resource->id
         ]);

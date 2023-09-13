@@ -6,7 +6,6 @@ use App\Models\Coordinate;
 use App\Models\User;
 use App\Repositories\Interfaces\CoordinateRepositoryInterface;
 use App\Services\CoordinateService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,7 +28,7 @@ class CoordinateServiceTest extends TestCase
      * @test
      * @covers ::getCoordinateById
      */
-    public function testGetCoordinateById()
+    public function test_get_coordinate_by_id()
     {
         /** @var Coordinate $coordinate */
         $coordinate = Coordinate::factory()->create();
@@ -47,22 +46,17 @@ class CoordinateServiceTest extends TestCase
      * @test
      * @covers ::getCoordinatesByUser
      */
-    public function testGetCoordinateByUser()
+    public function test_get_coordinate_by_user()
     {
         /** @var User $user */
         $user = User::factory()->create();
-
-        // expect to call the findByUser method on repository object
-        $repository = $this->mock(CoordinateRepositoryInterface::class);
-        // todo check why this returns an error
-//        $repository->shouldReceive('findByUser')->once()->with($user->id)->andReturn([]);
 
         $result = $this->service->getCoordinatesByUser($user->id);
 
         $this->assertEquals([], $result->toArray());
 
         /** @var Coordinate $coordinate */
-        $coordinate = Coordinate::factory()->forUser($user)->create();
+        $coordinate = Coordinate::factory()->withUsers([$user->id])->create();
 
         $foundCoordinates = $this->service->getCoordinatesByUser($user->id);
         $this->assertCount(1, $foundCoordinates);
@@ -75,7 +69,7 @@ class CoordinateServiceTest extends TestCase
      * @test
      * @covers ::getAllCoordinates
      */
-    public function testGetAllCoordinates()
+    public function test_get_all_coordinates()
     {
         Coordinate::factory(5)->create();
 
@@ -88,22 +82,23 @@ class CoordinateServiceTest extends TestCase
      * @test
      * @covers ::createCoordinate
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = Coordinate::factory()->make()->toArray();
+        /** @var Coordinate $coordinate */
+        $coordinate = Coordinate::factory()->make();
 
-        $coordinate = $this->service->createCoordinate($data);
+        $createdCoordinate = $this->service->createCoordinate($coordinate->toArray());
 
-        $this->assertInstanceOf(Coordinate::class, $coordinate);
-        $this->assertEquals($data['x'], $coordinate->x);
-        $this->assertEquals($data['y'], $coordinate->y);
-        $this->assertEquals($data['z'], $coordinate->z);
-        $this->assertEquals($data['t'], $coordinate->t);
-        $this->assertDatabaseHas($coordinate->getTable(), [
-            'x' => $data['x'],
-            'y' => $data['y'],
-            'z' => $data['z'],
-            't' => $data['t'],
+        $this->assertInstanceOf(Coordinate::class, $createdCoordinate);
+        $this->assertEquals($coordinate->x, $createdCoordinate->x);
+        $this->assertEquals($coordinate->y, $createdCoordinate->y);
+        $this->assertEquals($coordinate->z, $createdCoordinate->z);
+        $this->assertEquals($coordinate->t, $createdCoordinate->t);
+        $this->assertDatabaseHas($createdCoordinate->getTable(), [
+            'x' => $coordinate->x,
+            'y' => $coordinate->y,
+            'z' => $coordinate->z,
+            't' => $coordinate->t,
         ]);
     }
 
@@ -111,25 +106,26 @@ class CoordinateServiceTest extends TestCase
      * @test
      * @covers ::updateCoordinate
      */
-    public function testUpdate()
+    public function test_update()
     {
         /** @var Coordinate $coordinate */
         $coordinate = Coordinate::factory()->create();
-        $newData = Coordinate::factory()->make()->toArray();
+        /** @var Coordinate $newCoordinate */
+        $newCoordinate = Coordinate::factory()->create();
 
         /** @var Coordinate $updatedCoordinate */
-        $updatedCoordinate = $this->service->updateCoordinate($newData, $coordinate->id);
+        $updatedCoordinate = $this->service->updateCoordinate($newCoordinate->toArray(), $coordinate->id);
 
-        $this->assertEquals($newData['x'], $updatedCoordinate->x);
-        $this->assertEquals($newData['y'], $updatedCoordinate->y);
-        $this->assertEquals($newData['z'], $updatedCoordinate->z);
-        $this->assertEquals($newData['t'], $updatedCoordinate->t);
+        $this->assertEquals($newCoordinate->x, $updatedCoordinate->x);
+        $this->assertEquals($newCoordinate->y, $updatedCoordinate->y);
+        $this->assertEquals($newCoordinate->z, $updatedCoordinate->z);
+        $this->assertEquals($newCoordinate->t, $updatedCoordinate->t);
         $this->assertDatabaseHas($coordinate->getTable(), [
             'id' => $coordinate->id,
-            'x'  => $newData['x'],
-            'y'  => $newData['y'],
-            'z'  => $newData['z'],
-            't'  => $newData['t'],
+            'x'  => $newCoordinate->x,
+            'y'  => $newCoordinate->y,
+            'z'  => $newCoordinate->z,
+            't'  => $newCoordinate->t,
         ]);
     }
 
@@ -137,7 +133,7 @@ class CoordinateServiceTest extends TestCase
      * @test
      * @covers ::deleteCoordinate
      */
-    public function testDelete()
+    public function test_delete()
     {
         /** @var Coordinate $coordinate */
         $coordinate = Coordinate::factory()->create();
@@ -145,9 +141,6 @@ class CoordinateServiceTest extends TestCase
         $result = $this->service->deleteCoordinate($coordinate->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $this->service->getCoordinateById($coordinate->id);
         $this->assertDatabaseMissing($coordinate->getTable(), [
             'id' => $coordinate->id
         ]);

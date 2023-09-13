@@ -3,9 +3,7 @@
 namespace Tests\Feature\Services;
 
 use App\Models\Event;
-use App\Repositories\EventRepository;
 use App\Services\EventService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,15 +19,14 @@ class EventServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $eventRepository = app(EventRepository::class);
-        $this->service = new EventService($eventRepository);
+        $this->service = app(EventService::class);
     }
 
     /**
      * @test
      * @covers ::getEventById
      */
-    public function testGetEventById()
+    public function test_get_event_by_id()
     {
         /** @var Event $event */
         $event = Event::factory()->create();
@@ -45,7 +42,7 @@ class EventServiceTest extends TestCase
      * @test
      * @covers ::getAllEvents
      */
-    public function testGetAllEvents()
+    public function test_get_all_events()
     {
         Event::factory(5)->create();
 
@@ -58,18 +55,19 @@ class EventServiceTest extends TestCase
      * @test
      * @covers ::createEvent
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = Event::factory()->make()->toArray();
+        /** @var Event $event */
+        $event = Event::factory()->make();
 
-        $event = $this->service->createEvent($data);
+        $createdEvent = $this->service->createEvent($event->toArray());
 
-        $this->assertInstanceOf(Event::class, $event);
-        $this->assertEquals($data['title'], $event->title);
-        $this->assertEquals($data['description'], $event->description);
+        $this->assertInstanceOf(Event::class, $createdEvent);
+        $this->assertEquals($event->title, $createdEvent->title);
+        $this->assertEquals($event->description, $createdEvent->description);
         $this->assertDatabaseHas($event->getTable(), [
-            'title'       => $data['title'],
-            'description' => $data['description']
+            'title'       => $event->title,
+            'description' => $event->description,
         ]);
     }
 
@@ -77,20 +75,22 @@ class EventServiceTest extends TestCase
      * @test
      * @covers ::updateEvent
      */
-    public function testUpdate()
+    public function test_update()
     {
+        /** @var Event $event */
         $event = Event::factory()->create();
-        $newData = Event::factory()->make()->toArray();
+        /** @var Event $newEvent */
+        $newEvent = Event::factory()->make();
 
-        $updatedEvent = $this->service->updateEvent($newData, $event->id);
+        $updatedEvent = $this->service->updateEvent($newEvent->toArray(), $event->id);
 
         $this->assertInstanceOf(Event::class, $updatedEvent);
-        $this->assertEquals($newData['title'], $updatedEvent->title);
-        $this->assertEquals($newData['description'], $updatedEvent->description);
+        $this->assertEquals($newEvent->title, $updatedEvent->title);
+        $this->assertEquals($newEvent->description, $updatedEvent->description);
         $this->assertDatabaseHas($event->getTable(), [
             'id'          => $event->id,
-            'title'       => $newData['title'],
-            'description' => $newData['description']
+            'title'       => $newEvent->title,
+            'description' => $newEvent->description,
         ]);
     }
 
@@ -98,18 +98,15 @@ class EventServiceTest extends TestCase
      * @test
      * @covers ::deleteEvent
      */
-    public function testDelete()
+    public function test_delete()
     {
         $event = Event::factory()->create();
 
         $result = $this->service->deleteEvent($event->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $this->service->getEventById($event->id);
         $this->assertDatabaseMissing($event->getTable(), [
-            'id' => $event->id
+            'id' => $event->id,
         ]);
     }
 }

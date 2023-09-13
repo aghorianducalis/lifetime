@@ -20,6 +20,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
 
     public function update(array $data, $id): User
     {
+        /** @var User $model */
         $model = $this->find($id);
         $model->fill($data);
         $model->email_verified_at = $data['email_verified_at'];
@@ -27,6 +28,46 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         $model->refresh();
 
         return $model;
+    }
+
+    public function attachEvents(User $user, array $eventIds): void
+    {
+        $user->events()->attach($eventIds);
+    }
+
+    public function detachEvents(User $user, array $eventIds): int
+    {
+        return $user->events()->detach($eventIds);
+    }
+
+    public function attachCoordinates(User $user, array $coordinateIds): void
+    {
+        $user->coordinates()->attach($coordinateIds);
+    }
+
+    public function detachCoordinates(User $user, array $coordinateIds): int
+    {
+        return $user->coordinates()->detach($coordinateIds);
+    }
+
+    public function attachResources(User $user, array $resourceIds): void
+    {
+        $user->resources()->attach($resourceIds);
+    }
+
+    public function detachResources(User $user, array $resourceIds): int
+    {
+        return $user->resources()->detach($resourceIds);
+    }
+
+    public function attachResourceTypes(User $user, array $resourceTypeIds): void
+    {
+        $user->resourceTypes()->attach($resourceTypeIds);
+    }
+
+    public function detachResourceTypes(User $user, array $resourceTypeIds): int
+    {
+        return $user->resourceTypes()->detach($resourceTypeIds);
     }
 
     protected function query(): Builder

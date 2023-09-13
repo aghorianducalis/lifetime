@@ -19,7 +19,7 @@ class ResourceControllerTest extends TestCase
      * @test
      * @covers ::index
      */
-    public function testIndex()
+    public function test_index()
     {
         Resource::factory(3)->create();
 
@@ -33,7 +33,7 @@ class ResourceControllerTest extends TestCase
      * @test
      * @covers ::store
      */
-    public function testCreate()
+    public function test_create()
     {
         $resourceData = Resource::factory()->make()->toArray();
 
@@ -47,7 +47,7 @@ class ResourceControllerTest extends TestCase
      * @test
      * @covers ::show
      */
-    public function testShow()
+    public function test_show()
     {
         $resource = Resource::factory()->create();
 
@@ -61,7 +61,7 @@ class ResourceControllerTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdate()
+    public function test_update()
     {
         $resource = Resource::factory()->create();
         $updatedData = Resource::factory()->make()->only([
@@ -79,7 +79,7 @@ class ResourceControllerTest extends TestCase
      * @test
      * @covers ::destroy
      */
-    public function testDestroy()
+    public function test_destroy()
     {
         $resource = Resource::factory()->create();
 

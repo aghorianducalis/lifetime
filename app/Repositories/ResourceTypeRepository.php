@@ -28,6 +28,16 @@ class ResourceTypeRepository extends EloquentRepository implements ResourceTypeR
         return $this->matching($criteria);
     }
 
+    public function attachUsers(ResourceType $resourceType, array $userIds): void
+    {
+        $resourceType->users()->attach($userIds);
+    }
+
+    public function detachUsers(ResourceType $resourceType, array $userIds): int
+    {
+        return $resourceType->users()->detach($userIds);
+    }
+
     protected function query(): Builder
     {
         return ResourceType::query();

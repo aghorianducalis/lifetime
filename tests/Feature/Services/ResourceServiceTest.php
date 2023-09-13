@@ -6,7 +6,6 @@ use App\Models\Resource;
 use App\Models\User;
 use App\Repositories\Interfaces\ResourceRepositoryInterface;
 use App\Services\ResourceService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,7 +28,7 @@ class ResourceServiceTest extends TestCase
      * @test
      * @covers ::getResourceById
      */
-    public function testGetResourceById()
+    public function test_get_resource_by_id()
     {
         /** @var Resource $resource */
         $resource = Resource::factory()->create();
@@ -45,22 +44,17 @@ class ResourceServiceTest extends TestCase
      * @test
      * @covers ::getResourcesByUser
      */
-    public function testGetResourceByUser()
+    public function test_get_resource_by_user()
     {
         /** @var User $user */
         $user = User::factory()->create();
-
-        // expect to call the findByUser method on repository object
-        $repository = $this->mock(ResourceRepositoryInterface::class);
-        // todo check why this returns an error
-//        $repository->shouldReceive('findByUser')->once()->with($user->id)->andReturn([]);
 
         $result = $this->service->getResourcesByUser($user->id);
 
         $this->assertEquals([], $result->toArray());
 
         /** @var Resource $resource */
-        $resource = Resource::factory()->forUser($user)->create();
+        $resource = Resource::factory()->withUsers([$user->id])->create();
 
         $foundResources = $this->service->getResourcesByUser($user->id);
         $this->assertCount(1, $foundResources);
@@ -73,7 +67,7 @@ class ResourceServiceTest extends TestCase
      * @test
      * @covers ::getAllResources
      */
-    public function testGetAllResources()
+    public function test_get_all_resources()
     {
         Resource::factory(5)->create();
 
@@ -86,18 +80,19 @@ class ResourceServiceTest extends TestCase
      * @test
      * @covers ::createResource
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = Resource::factory()->make()->toArray();
+        /** @var Resource $resource */
+        $resource = Resource::factory()->make();
 
-        $resource = $this->service->createResource($data);
+        $createdResource = $this->service->createResource($resource->toArray());
 
-        $this->assertInstanceOf(Resource::class, $resource);
-        $this->assertEquals($data['amount'], $resource->amount);
-        $this->assertEquals($data['resource_type_id'], $resource->resource_type_id);
-        $this->assertDatabaseHas($resource->getTable(), [
-            'amount'           => $data['amount'],
-            'resource_type_id' => $data['resource_type_id']
+        $this->assertInstanceOf(Resource::class, $createdResource);
+        $this->assertEquals($resource->amount, $createdResource->amount);
+        $this->assertEquals($resource->resource_type_id, $createdResource->resource_type_id);
+        $this->assertDatabaseHas($createdResource->getTable(), [
+            'amount'           => $resource->amount,
+            'resource_type_id' => $resource->resource_type_id,
         ]);
     }
 
@@ -105,21 +100,22 @@ class ResourceServiceTest extends TestCase
      * @test
      * @covers ::updateResource
      */
-    public function testUpdate()
+    public function test_update()
     {
         /** @var Resource $resource */
         $resource = Resource::factory()->create();
-        $newData = Resource::factory()->make()->toArray();
+        /** @var Resource $newResource */
+        $newResource = Resource::factory()->make();
 
-        $updatedResource = $this->service->updateResource($newData, $resource->id);
+        $updatedResource = $this->service->updateResource($newResource->toArray(), $resource->id);
 
         $this->assertInstanceOf(Resource::class, $updatedResource);
-        $this->assertEquals($newData['amount'], $updatedResource->amount);
-        $this->assertEquals($newData['resource_type_id'], $updatedResource->resource_type_id);
+        $this->assertEquals($newResource->amount, $updatedResource->amount);
+        $this->assertEquals($newResource->resource_type_id, $updatedResource->resource_type_id);
         $this->assertDatabaseHas($resource->getTable(), [
             'id'               => $resource->id,
-            'amount'           => $newData['amount'],
-            'resource_type_id' => $newData['resource_type_id']
+            'amount'           => $newResource->amount,
+            'resource_type_id' => $newResource->resource_type_id,
         ]);
     }
 
@@ -127,7 +123,7 @@ class ResourceServiceTest extends TestCase
      * @test
      * @covers ::deleteResource
      */
-    public function testDelete()
+    public function test_delete()
     {
         /** @var Resource $resource */
         $resource = Resource::factory()->create();
@@ -135,9 +131,6 @@ class ResourceServiceTest extends TestCase
         $result = $this->service->deleteResource($resource->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $this->service->getResourceById($resource->id);
         $this->assertDatabaseMissing($resource->getTable(), [
             'id' => $resource->id
         ]);

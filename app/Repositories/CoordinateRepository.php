@@ -19,6 +19,26 @@ class CoordinateRepository extends EloquentRepository implements CoordinateRepos
         return $this->matching($criteria);
     }
 
+    public function attachUsers(Coordinate $coordinate, array $userIds): void
+    {
+        $coordinate->users()->attach($userIds);
+    }
+
+    public function detachUsers(Coordinate $coordinate, array $userIds): int
+    {
+        return $coordinate->users()->detach($userIds);
+    }
+
+    public function attachEvents(Coordinate $coordinate, array $eventIds): void
+    {
+        $coordinate->events()->attach($eventIds);
+    }
+
+    public function detachEvents(Coordinate $coordinate, array $eventIds): int
+    {
+        return $coordinate->events()->detach($eventIds);
+    }
+
     protected function query(): Builder
     {
         return Coordinate::query();

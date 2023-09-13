@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ResourceType;
-use App\Models\User;
+use App\Repositories\Interfaces\ResourceTypeRepositoryInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,17 +26,20 @@ class ResourceTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'        => 'Resource type #' . fake()->randomNumber() . ' ' . fake()->sentence(),
-            'description'  => fake()->text(),
+            'title'       => 'Resource type #' . fake()->randomNumber() . ' ' . fake()->sentence(),
+            'description' => fake()->text(),
         ];
     }
 
-    public function forUser(User $user = null): static
+    public function withUsers(array $userIds): static
     {
-        $user = $user ?: User::factory()->create();
-
-        return $this->afterCreating(function (ResourceType $resourceType) use ($user) {
-            $resourceType->users()->attach($user);
+        return $this->afterCreating(function (ResourceType $resourceType) use ($userIds) {
+            $this->getRepository()->attachUsers($resourceType, $userIds);
         });
+    }
+
+    protected function getRepository(): ResourceTypeRepositoryInterface
+    {
+        return app(ResourceTypeRepositoryInterface::class);
     }
 }

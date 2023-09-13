@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Event;
-use App\Models\User;
+use App\Repositories\Interfaces\EventRepositoryInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -31,12 +31,29 @@ class EventFactory extends Factory
         ];
     }
 
-    public function forUser(User $user = null): Factory
+    public function withCoordinates(array $coordinateIds): static
     {
-        $user = $user ?: User::factory()->create();
-
-        return $this->afterCreating(function (Event $event) use ($user) {
-            $event->users()->attach($user);
+        return $this->afterCreating(function (Event $event) use ($coordinateIds) {
+            $this->getRepository()->attachCoordinates($event, $coordinateIds);
         });
+    }
+
+    public function withResources(array $resourceIds): static
+    {
+        return $this->afterCreating(function (Event $event) use ($resourceIds) {
+            $this->getRepository()->attachResources($event, $resourceIds);
+        });
+    }
+
+    public function withUsers(array $userIds): static
+    {
+        return $this->afterCreating(function (Event $event) use ($userIds) {
+            $this->getRepository()->attachUsers($event, $userIds);
+        });
+    }
+
+    protected function getRepository(): EventRepositoryInterface
+    {
+        return app(EventRepositoryInterface::class);
     }
 }

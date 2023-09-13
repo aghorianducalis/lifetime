@@ -19,7 +19,7 @@ class EventControllerTest extends TestCase
      * @test
      * @covers ::index
      */
-    public function testIndex()
+    public function test_index()
     {
         Event::factory(3)->create();
 
@@ -33,7 +33,7 @@ class EventControllerTest extends TestCase
      * @test
      * @covers ::store
      */
-    public function testCreate()
+    public function test_create()
     {
         $eventData = Event::factory()->make()->toArray();
 
@@ -47,7 +47,7 @@ class EventControllerTest extends TestCase
      * @test
      * @covers ::show
      */
-    public function testShow()
+    public function test_show()
     {
         $event = Event::factory()->create();
 
@@ -61,7 +61,7 @@ class EventControllerTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdate()
+    public function test_update()
     {
         $event = Event::factory()->create();
         $updatedData = Event::factory()->make()->only([
@@ -79,7 +79,7 @@ class EventControllerTest extends TestCase
      * @test
      * @covers ::destroy
      */
-    public function testDestroy()
+    public function test_destroy()
     {
         $event = Event::factory()->create();
 

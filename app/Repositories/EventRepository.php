@@ -12,4 +12,34 @@ class EventRepository extends EloquentRepository implements EventRepositoryInter
     {
         return Event::query();
     }
+
+    public function attachCoordinates(Event $event, array $coordinateIds): void
+    {
+        $event->coordinates()->attach($coordinateIds);
+    }
+
+    public function detachCoordinates(Event $event, array $coordinateIds): int
+    {
+        return $event->coordinates()->detach($coordinateIds);
+    }
+
+    public function attachUsers(Event $event, array $userIds): void
+    {
+        $event->users()->attach($userIds);
+    }
+
+    public function detachUsers(Event $event, array $userIds): int
+    {
+        return $event->users()->detach($userIds);
+    }
+
+    public function attachResources(Event $event, array $resourceIds): void
+    {
+        $event->resources()->attach($resourceIds);
+    }
+
+    public function detachResources(Event $event, array $resourceIds): int
+    {
+        return $event->resources()->detach($resourceIds);
+    }
 }

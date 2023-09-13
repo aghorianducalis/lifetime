@@ -20,7 +20,7 @@ class UserControllerTest extends TestCase
      * @test
      * @covers ::index
      */
-    public function testIndex()
+    public function test_index()
     {
         User::factory(3)->create();
 
@@ -34,7 +34,7 @@ class UserControllerTest extends TestCase
      * @test
      * @covers ::store
      */
-    public function testCreate()
+    public function test_create()
     {
         /** @var User $model */
         $model = User::factory()->make();
@@ -52,7 +52,7 @@ class UserControllerTest extends TestCase
      * @test
      * @covers ::show
      */
-    public function testShow()
+    public function test_show()
     {
         $user = User::factory()->create();
 
@@ -66,7 +66,7 @@ class UserControllerTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdate()
+    public function test_update()
     {
         $user = User::factory()->create();
         $updatedData = User::factory()->make()->only([
@@ -87,7 +87,7 @@ class UserControllerTest extends TestCase
      * @test
      * @covers ::destroy
      */
-    public function testDestroy()
+    public function test_destroy()
     {
         $user = User::factory()->create();
 
