@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -32,11 +31,11 @@ class Event extends Model
     /**
      * The coordinates that are related to the event.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function coordinates(): HasMany
+    public function coordinates(): BelongsToMany
     {
-        return $this->hasMany(Coordinate::class);
+        return $this->belongsToMany(Coordinate::class, 'coordinate_event', 'event_id', 'coordinate_id');
     }
 
     /**

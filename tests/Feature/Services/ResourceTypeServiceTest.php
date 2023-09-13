@@ -6,8 +6,9 @@ use App\Models\ResourceType;
 use App\Models\User;
 use App\Repositories\Interfaces\ResourceTypeRepositoryInterface;
 use App\Services\ResourceTypeService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 /**
@@ -17,24 +18,39 @@ class ResourceTypeServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected ResourceTypeService $service;
-
-    protected function setUp(): void
+    /**
+     * @test
+     * @covers ::getAllResourceTypes
+     */
+    public function test_get_all_resource_types()
     {
-        parent::setUp();
-        $this->service = app(ResourceTypeService::class);
+        $resourceTypes = ResourceType::factory(5)->create();
+
+        $repositoryMock = $this->mock(ResourceTypeRepositoryInterface::class, function (MockInterface $mock) use ($resourceTypes) {
+            $mock->shouldReceive('matching')->once()->andReturn($resourceTypes);
+        });
+        $service = $this->makeService($repositoryMock);
+
+        $resourceTypes = $service->getAllResourceTypes();
+
+        $this->assertCount(5, $resourceTypes);
     }
 
     /**
      * @test
      * @covers ::getResourceTypeById
      */
-    public function testGetResourceTypeById()
+    public function test_get_resource_type_by_id()
     {
         /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->create();
 
-        $foundResourceType = $this->service->getResourceTypeById($resourceType->id);
+        $repositoryMock = $this->mock(ResourceTypeRepositoryInterface::class, function (MockInterface $mock) use ($resourceType) {
+            $mock->shouldReceive('find')->once()->with($resourceType->id)->andReturn($resourceType);
+        });
+        $service = $this->makeService($repositoryMock);
+
+        $foundResourceType = $service->getResourceTypeById($resourceType->id);
 
         $this->assertInstanceOf(ResourceType::class, $foundResourceType);
         $this->assertEquals($resourceType->title, $foundResourceType->title);
@@ -45,59 +61,45 @@ class ResourceTypeServiceTest extends TestCase
      * @test
      * @covers ::getResourceTypesByUser
      */
-    public function testGetResourceTypeByUser()
+    public function test_get_resource_type_by_user()
     {
         /** @var User $user */
         $user = User::factory()->create();
-
-        // expect to call the findByUser method on repository object
-        $repository = $this->mock(ResourceTypeRepositoryInterface::class);
-        // todo check why this returns an error
-//        $repository->shouldReceive('findByUser')->once()->with($user->id)->andReturn([]);
-
-        $result = $this->service->getResourceTypesByUser($user->id);
-
-        $this->assertEquals([], $result->toArray());
+        $userId = $user->id;
 
         /** @var ResourceType $resourceType */
-        $resourceType = ResourceType::factory()->forUser($user)->create();
+        $resourceType = ResourceType::factory()->withUsers([$userId])->create();
 
-        $foundResourceTypes = $this->service->getResourceTypesByUser($user->id);
+        $repositoryMock = $this->partialMock(ResourceTypeRepositoryInterface::class, function (MockInterface $mock) use ($userId, $resourceType) {
+            $mock->shouldReceive('findByUser')->once()->with($userId)->andReturn(collect([$resourceType]));
+        });
+        $service = $this->makeService($repositoryMock);
+
+        $foundResourceTypes = $service->getResourceTypesByUser($userId);
+
         $this->assertCount(1, $foundResourceTypes);
         $foundResourceType = $foundResourceTypes->first();
         $this->assertEquals($resourceType->id, $foundResourceType->id);
-        $this->assertEquals($user->id, $foundResourceType->users()->first()->id);
-    }
-
-    /**
-     * @test
-     * @covers ::getAllResourceTypes
-     */
-    public function testGetAllResourceTypes()
-    {
-        ResourceType::factory(5)->create();
-
-        $resourceTypes = $this->service->getAllResourceTypes();
-
-        $this->assertCount(5, $resourceTypes);
+        $this->assertEquals($userId, $foundResourceType->users()->first()->id);
     }
 
     /**
      * @test
      * @covers ::createResourceType
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = ResourceType::factory()->make()->toArray();
+        /** @var ResourceType $resourceType */
+        $resourceType = ResourceType::factory()->make();
 
-        $resourceType = $this->service->createResourceType($data);
+        $createdResourceType = $this->makeService()->createResourceType($resourceType->toArray());
 
-        $this->assertInstanceOf(ResourceType::class, $resourceType);
-        $this->assertEquals($data['title'], $resourceType->title);
-        $this->assertEquals($data['description'], $resourceType->description);
+        $this->assertInstanceOf(ResourceType::class, $createdResourceType);
+        $this->assertEquals($resourceType->title, $createdResourceType->title);
+        $this->assertEquals($resourceType->description, $createdResourceType->description);
         $this->assertDatabaseHas($resourceType->getTable(), [
-            'title'       => $data['title'],
-            'description' => $data['description'],
+            'title'       => $resourceType->title,
+            'description' => $resourceType->description,
         ]);
     }
 
@@ -105,20 +107,22 @@ class ResourceTypeServiceTest extends TestCase
      * @test
      * @covers ::updateResourceType
      */
-    public function testUpdate()
+    public function test_update()
     {
+        /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->create();
-        $newData = ResourceType::factory()->make()->toArray();
+        /** @var ResourceType $newResourceType */
+        $newResourceType = ResourceType::factory()->make();
 
-        $updatedResourceType = $this->service->updateResourceType($newData, $resourceType->id);
+        $updatedResourceType = $this->makeService()->updateResourceType($newResourceType->toArray(), $resourceType->id);
 
         $this->assertInstanceOf(ResourceType::class, $updatedResourceType);
-        $this->assertEquals($newData['title'], $updatedResourceType->title);
-        $this->assertEquals($newData['description'], $updatedResourceType->description);
+        $this->assertEquals($newResourceType->title, $updatedResourceType->title);
+        $this->assertEquals($newResourceType->description, $updatedResourceType->description);
         $this->assertDatabaseHas($resourceType->getTable(), [
             'id'          => $resourceType->id,
-            'title'       => $newData['title'],
-            'description' => $newData['description'],
+            'title'       => $updatedResourceType->title,
+            'description' => $updatedResourceType->description,
         ]);
     }
 
@@ -126,18 +130,26 @@ class ResourceTypeServiceTest extends TestCase
      * @test
      * @covers ::deleteResourceType
      */
-    public function testDelete()
+    public function test_delete()
     {
         $resourceType = ResourceType::factory()->create();
 
-        $result = $this->service->deleteResourceType($resourceType->id);
+        $result = $this->makeService()->deleteResourceType($resourceType->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $this->service->getResourceTypeById($resourceType->id);
         $this->assertDatabaseMissing($resourceType->getTable(), [
             'id' => $resourceType->id
         ]);
+    }
+
+    protected function makeService(ResourceTypeRepositoryInterface $repositoryMock = null): ResourceTypeService
+    {
+        if ($repositoryMock) {
+            $this->app->bind(ResourceTypeService::class, function (Application $app) use ($repositoryMock) {
+                return new ResourceTypeService($repositoryMock);
+            });
+        }
+
+        return app()->make(ResourceTypeService::class);
     }
 }

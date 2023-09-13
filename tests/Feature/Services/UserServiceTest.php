@@ -4,7 +4,6 @@ namespace Tests\Feature\Services;
 
 use App\Models\User;
 use App\Services\UserService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,7 +26,7 @@ class UserServiceTest extends TestCase
      * @test
      * @covers ::getUserById
      */
-    public function testGetUserById()
+    public function test_get_user_by_id()
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -43,7 +42,7 @@ class UserServiceTest extends TestCase
      * @test
      * @covers ::getAllUsers
      */
-    public function testGetAllUsers()
+    public function test_get_all_users()
     {
         User::factory(5)->create();
 
@@ -56,21 +55,21 @@ class UserServiceTest extends TestCase
      * @test
      * @covers ::createUser
      */
-    public function testCreate()
+    public function test_create()
     {
-        /** @var User $model */
-        $model = User::factory()->make();
-        $model->makeVisible($model->getAttributes());
-        $data = $model->getAttributes();
+        /** @var User $user */
+        $user = User::factory()->make();
+        $user->makeVisible($user->getAttributes());
+        $data = $user->getAttributes();
 
-        $user = $this->service->createUser($data);
+        $createdUser = $this->service->createUser($user->getAttributes());
 
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($data['name'], $user->name);
-        $this->assertEquals($data['email'], $user->email);
-        $this->assertDatabaseHas($user->getTable(), [
-            'name'  => $data['name'],
-            'email' => $data['email'],
+        $this->assertInstanceOf(User::class, $createdUser);
+        $this->assertEquals($user->name, $createdUser->name);
+        $this->assertEquals($user->email, $createdUser->email);
+        $this->assertDatabaseHas($createdUser->getTable(), [
+            'name'  => $user->name,
+            'email' => $user->email,
         ]);
     }
 
@@ -78,7 +77,7 @@ class UserServiceTest extends TestCase
      * @test
      * @covers ::updateUser
      */
-    public function testUpdate()
+    public function test_update()
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -91,12 +90,13 @@ class UserServiceTest extends TestCase
         $updatedUser = $this->service->updateUser($newData, $user->id);
 
         $this->assertInstanceOf(User::class, $updatedUser);
-        $this->assertEquals($newData['name'], $updatedUser->name);
-        $this->assertEquals($newData['email'], $updatedUser->email);
+        $this->assertEquals($newUser->name, $updatedUser->name);
+        $this->assertEquals($newUser->email, $updatedUser->email);
+        $this->assertEquals($newData['email_verified_at'], $updatedUser->email_verified_at);
         $this->assertDatabaseHas($user->getTable(), [
             'id'    => $user->id,
-            'name'  => $newData['name'],
-            'email' => $newData['email'],
+            'name'  => $newUser->name,
+            'email' => $newUser->email,
         ]);
     }
 
@@ -104,7 +104,7 @@ class UserServiceTest extends TestCase
      * @test
      * @covers ::deleteUser
      */
-    public function testDelete()
+    public function test_delete()
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -112,9 +112,6 @@ class UserServiceTest extends TestCase
         $result = $this->service->deleteUser($user->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $this->service->getUserById($user->id);
         $this->assertDatabaseMissing($user->getTable(), [
             'id' => $user->id
         ]);

@@ -4,7 +4,6 @@ namespace Tests\Feature\Services;
 
 use App\Models\Location;
 use App\Services\LocationService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,7 +26,7 @@ class LocationServiceTest extends TestCase
      * @test
      * @covers ::getLocationById
      */
-    public function testGetLocationById()
+    public function test_get_location_by_id()
     {
         /** @var Location $location */
         $location = Location::factory()->create();
@@ -44,7 +43,7 @@ class LocationServiceTest extends TestCase
      * @test
      * @covers ::getAllLocations
      */
-    public function testGetAllLocations()
+    public function test_get_all_locations()
     {
         Location::factory(5)->create();
 
@@ -57,20 +56,21 @@ class LocationServiceTest extends TestCase
      * @test
      * @covers ::createLocation
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = Location::factory()->make()->toArray();
+        /** @var Location $location */
+        $location = Location::factory()->make();
 
-        $location = $this->service->createLocation($data);
+        $createdLocation = $this->service->createLocation($location->toArray());
 
-        $this->assertInstanceOf(Location::class, $location);
-        $this->assertEquals($data['title'], $location->title);
-        $this->assertEquals($data['description'], $location->description);
-        $this->assertEquals($data['coordinate_id'], $location->coordinate_id);
-        $this->assertDatabaseHas($location->getTable(), [
-            'title'         => $data['title'],
-            'description'   => $data['description'],
-            'coordinate_id' => $data['coordinate_id'],
+        $this->assertInstanceOf(Location::class, $createdLocation);
+        $this->assertEquals($location->title, $createdLocation->title);
+        $this->assertEquals($location->description, $createdLocation->description);
+        $this->assertEquals($location->coordinate_id, $createdLocation->coordinate_id);
+        $this->assertDatabaseHas($createdLocation->getTable(), [
+            'title'         => $location->title,
+            'description'   => $location->description,
+            'coordinate_id' => $location->coordinate_id,
         ]);
     }
 
@@ -78,23 +78,24 @@ class LocationServiceTest extends TestCase
      * @test
      * @covers ::updateLocation
      */
-    public function testUpdate()
+    public function test_update()
     {
         /** @var Location $location */
         $location = Location::factory()->create();
-        $newData = Location::factory()->make()->toArray();
+        /** @var Location $newLocation */
+        $newLocation = Location::factory()->make();
 
-        $updatedLocation = $this->service->updateLocation($newData, $location->id);
+        $updatedLocation = $this->service->updateLocation($newLocation->toArray(), $location->id);
 
         $this->assertInstanceOf(Location::class, $updatedLocation);
-        $this->assertEquals($newData['title'], $updatedLocation->title);
-        $this->assertEquals($newData['description'], $updatedLocation->description);
-        $this->assertEquals($newData['coordinate_id'], $updatedLocation->coordinate_id);
+        $this->assertEquals($newLocation->title, $updatedLocation->title);
+        $this->assertEquals($newLocation->description, $updatedLocation->description);
+        $this->assertEquals($newLocation->coordinate_id, $updatedLocation->coordinate_id);
         $this->assertDatabaseHas($location->getTable(), [
             'id'            => $location->id,
-            'title'         => $newData['title'],
-            'description'   => $newData['description'],
-            'coordinate_id' => $newData['coordinate_id'],
+            'title'         => $newLocation->title,
+            'description'   => $newLocation->description,
+            'coordinate_id' => $newLocation->coordinate_id,
         ]);
     }
 
@@ -102,7 +103,7 @@ class LocationServiceTest extends TestCase
      * @test
      * @covers ::deleteLocation
      */
-    public function testDelete()
+    public function test_delete()
     {
         /** @var Location $location */
         $location = Location::factory()->create();
@@ -110,9 +111,6 @@ class LocationServiceTest extends TestCase
         $result = $this->service->deleteLocation($location->id);
 
         $this->assertTrue($result);
-
-        $this->expectException(ModelNotFoundException::class);
-        $this->service->getLocationById($location->id);
         $this->assertDatabaseMissing($location->getTable(), [
             'id' => $location->id
         ]);

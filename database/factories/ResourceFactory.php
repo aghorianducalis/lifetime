@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Resource;
 use App\Models\ResourceType;
-use App\Models\User;
+use App\Repositories\Interfaces\ResourceRepositoryInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -32,12 +32,22 @@ class ResourceFactory extends Factory
         ];
     }
 
-    public function forUser(User $user = null): static
+    public function withEvents(array $eventIds): static
     {
-        $user = $user ?: User::factory()->create();
-
-        return $this->afterCreating(function (Resource $resource) use ($user) {
-            $resource->users()->attach($user);
+        return $this->afterCreating(function (Resource $resource) use ($eventIds) {
+            $this->getRepository()->attachEvents($resource, $eventIds);
         });
+    }
+
+    public function withUsers(array $userIds): static
+    {
+        return $this->afterCreating(function (Resource $resource) use ($userIds) {
+            $this->getRepository()->attachUsers($resource, $userIds);
+        });
+    }
+
+    protected function getRepository(): ResourceRepositoryInterface
+    {
+        return app(ResourceRepositoryInterface::class);
     }
 }

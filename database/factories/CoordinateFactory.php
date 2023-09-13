@@ -3,8 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Coordinate;
-use App\Models\Location;
-use App\Models\User;
+use App\Repositories\Interfaces\CoordinateRepositoryInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -34,22 +33,22 @@ class CoordinateFactory extends Factory
         ];
     }
 
-    public function withLocation(Location $location = null): static
+    public function withUsers(array $userIds): static
     {
-        $location = $location ?: Location::factory()->create();
-
-        return $this->afterCreating(function (Coordinate $coordinate) use ($location) {
-            $coordinate->location()->save($location);
-            $coordinate->save();
+        return $this->afterCreating(function (Coordinate $coordinate) use ($userIds) {
+            $this->getRepository()->attachUsers($coordinate, $userIds);
         });
     }
 
-    public function forUser(User $user = null): static
+    public function withEvents(array $eventIds): static
     {
-        $user = $user ?: User::factory()->create();
-
-        return $this->afterCreating(function (Coordinate $coordinate) use ($user) {
-            $coordinate->users()->attach($user);
+        return $this->afterCreating(function (Coordinate $coordinate) use ($eventIds) {
+            $this->getRepository()->attachEvents($coordinate, $eventIds);
         });
+    }
+
+    protected function getRepository(): CoordinateRepositoryInterface
+    {
+        return app(CoordinateRepositoryInterface::class);
     }
 }

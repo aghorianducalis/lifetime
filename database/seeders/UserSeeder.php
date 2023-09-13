@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Event;
+use App\Models\ResourceType;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -13,8 +15,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = User::factory()
-            ->withEvents(100)
-            ->withResourceTypes(100)
+            ->withEvents(Event::factory()->count(100)->create()->pluck('id')->toArray())
+            ->withResourceTypes(ResourceType::factory()->count(100)->create()->pluck('id')->toArray())
             ->count(10)
             ->create();
     }

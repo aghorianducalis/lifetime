@@ -27,7 +27,7 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::find
      */
-    public function testFind()
+    public function test_find()
     {
         /** @var Location $location */
         $location = Location::factory()->create();
@@ -44,10 +44,9 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::find
      */
-    public function testFindNonExistingLocation()
+    public function test_find_non_existing_location()
     {
         $this->expectException(ModelNotFoundException::class);
-
         $this->repository->find($this->getRandomUuid());
     }
 
@@ -55,7 +54,7 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::matching
      */
-    public function testGetAll()
+    public function test_get_all()
     {
         Location::factory(5)->create();
 
@@ -68,20 +67,22 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::create
      */
-    public function testCreate()
+    public function test_create()
     {
-        $data = Location::factory()->make()->toArray();
+        /** @var Location $location */
+        $location = Location::factory()->make();
 
-        $location = $this->repository->create($data);
+        /** @var Location $createdLocation */
+        $createdLocation = $this->repository->create($location->toArray());
 
         $this->assertInstanceOf(Location::class, $location);
-        $this->assertEquals($data['title'], $location->title);
-        $this->assertEquals($data['description'], $location->description);
-        $this->assertEquals($data['coordinate_id'], $location->coordinate_id);
+        $this->assertEquals($location->title, $createdLocation->title);
+        $this->assertEquals($location->description, $createdLocation->description);
+        $this->assertEquals($location->coordinate_id, $createdLocation->coordinate_id);
         $this->assertDatabaseHas($location->getTable(), [
-            'title'         => $data['title'],
-            'description'   => $data['description'],
-            'coordinate_id' => $data['coordinate_id'],
+            'title'         => $location->title,
+            'description'   => $location->description,
+            'coordinate_id' => $location->coordinate_id,
         ]);
     }
 
@@ -89,11 +90,11 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdateNonExistingLocation()
+    public function test_update_non_existing_location()
     {
-        $this->expectException(ModelNotFoundException::class);
-
         $newData = Location::factory()->make()->toArray();
+
+        $this->expectException(ModelNotFoundException::class);
         $this->repository->update($newData, $this->getRandomUuid());
     }
 
@@ -101,22 +102,25 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdate()
+    public function test_update()
     {
+        /** @var Location $location */
         $location = Location::factory()->create();
-        $newData = Location::factory()->make()->toArray();
+        /** @var Location $newLocation */
+        $newLocation = Location::factory()->make();
 
-        $updatedLocation = $this->repository->update($newData, $location->id);
+        /** @var Location $updatedLocation */
+        $updatedLocation = $this->repository->update($newLocation->toArray(), $location->id);
 
         $this->assertInstanceOf(Location::class, $updatedLocation);
-        $this->assertEquals($newData['title'], $updatedLocation->title);
-        $this->assertEquals($newData['description'], $updatedLocation->description);
-        $this->assertEquals($newData['coordinate_id'], $updatedLocation->coordinate_id);
+        $this->assertEquals($newLocation->title, $updatedLocation->title);
+        $this->assertEquals($newLocation->description, $updatedLocation->description);
+        $this->assertEquals($newLocation->coordinate_id, $updatedLocation->coordinate_id);
         $this->assertDatabaseHas($location->getTable(), [
             'id'            => $location->id,
-            'title'         => $newData['title'],
-            'description'   => $newData['description'],
-            'coordinate_id' => $newData['coordinate_id'],
+            'title'         => $newLocation->title,
+            'description'   => $newLocation->description,
+            'coordinate_id' => $newLocation->coordinate_id,
         ]);
     }
 
@@ -124,7 +128,7 @@ class LocationRepositoryTest extends TestCase
      * @test
      * @covers ::delete
      */
-    public function testDelete()
+    public function test_delete()
     {
         $location = Location::factory()->create();
 
@@ -132,8 +136,6 @@ class LocationRepositoryTest extends TestCase
 
         $this->assertTrue($result);
 
-        $this->expectException(ModelNotFoundException::class);
-        $foundLocation = $this->repository->find($location->id);
         $this->assertDatabaseMissing($location->getTable(), [
             'id' => $location->id
         ]);

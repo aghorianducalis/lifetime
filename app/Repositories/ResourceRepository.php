@@ -19,6 +19,26 @@ class ResourceRepository extends EloquentRepository implements ResourceRepositor
         return $this->matching($criteria);
     }
 
+    public function attachUsers(Resource $resource, array $userIds): void
+    {
+        $resource->users()->attach($userIds);
+    }
+
+    public function detachUsers(Resource $resource, array $userIds): int
+    {
+        return $resource->users()->detach($userIds);
+    }
+
+    public function attachEvents(Resource $resource, array $eventIds): void
+    {
+        $resource->events()->attach($eventIds);
+    }
+
+    public function detachEvents(Resource $resource, array $eventIds): int
+    {
+        return $resource->events()->detach($eventIds);
+    }
+
     protected function query(): Builder
     {
         return Resource::query();

@@ -19,7 +19,7 @@ class LocationControllerTest extends TestCase
      * @test
      * @covers ::index
      */
-    public function testIndex()
+    public function test_index()
     {
         Location::factory(3)->create();
 
@@ -33,7 +33,7 @@ class LocationControllerTest extends TestCase
      * @test
      * @covers ::store
      */
-    public function testCreate()
+    public function test_create()
     {
         $locationData = Location::factory()->make()->toArray();
 
@@ -47,7 +47,7 @@ class LocationControllerTest extends TestCase
      * @test
      * @covers ::show
      */
-    public function testShow()
+    public function test_show()
     {
         $location = Location::factory()->create();
 
@@ -61,7 +61,7 @@ class LocationControllerTest extends TestCase
      * @test
      * @covers ::update
      */
-    public function testUpdate()
+    public function test_update()
     {
         $location = Location::factory()->create();
         $updatedData = Location::factory()->make()->only([
@@ -80,7 +80,7 @@ class LocationControllerTest extends TestCase
      * @test
      * @covers ::destroy
      */
-    public function testDestroy()
+    public function test_destroy()
     {
         $location = Location::factory()->create();
 
