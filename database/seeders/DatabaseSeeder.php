@@ -13,9 +13,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         if (app()->isProduction()) {
-            //
+            $this->call([
+                RolePermissionSeeder::class,
+            ]);
         } else {
             $this->call([
+                RolePermissionSeeder::class,
                 UserSeeder::class,
                 LocationSeeder::class,
                 ResourceTypeSeeder::class,

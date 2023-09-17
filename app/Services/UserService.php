@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Collection;
@@ -30,8 +31,15 @@ class UserService
     {
         $password = Hash::make($data['password']);
         $data['password'] = $password;
+        $user = $this->userRepository->create($data);
 
-        return $this->userRepository->create($data);
+        $role = RoleEnum::tryFrom($data['role'] ?? '') ?? RoleEnum::User;
+
+        /** @var RolePermissionService $service */
+        $service = app(RolePermissionService::class);
+        $service->assignRoleToUser($user, $role);
+
+        return $user;
     }
 
     public function updateUser(array $data, string $id): User

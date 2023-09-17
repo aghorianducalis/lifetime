@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
 use App\Http\Requests\IndexUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -33,7 +34,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request, UserService $service)
     {
-        $user = $service->createUser($request->validated());
+        $data = array_merge($request->validated(), ['role' => RoleEnum::User->value]);
+        $user = $service->createUser($data);
 
         return new UserResource($user);
     }

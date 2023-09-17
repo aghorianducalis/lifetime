@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\Services;
 
+use App\Enums\PermissionEnum;
+use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Services\UserService;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -57,10 +60,10 @@ class UserServiceTest extends TestCase
      */
     public function test_create()
     {
+        $this->seed(RolePermissionSeeder::class);
         /** @var User $user */
         $user = User::factory()->make();
         $user->makeVisible($user->getAttributes());
-        $data = $user->getAttributes();
 
         $createdUser = $this->service->createUser($user->getAttributes());
 
@@ -71,6 +74,35 @@ class UserServiceTest extends TestCase
             'name'  => $user->name,
             'email' => $user->email,
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::createUser
+     * @dataProvider roleEnums
+     */
+    public function test_create_with_role(RoleEnum $roleEnum)
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $roleName = $roleEnum->value;
+        $permissionNames = PermissionEnum::permissionsFromRoleEnum($roleEnum);
+
+        /** @var User $user */
+        $user = User::factory()->make();
+        $user->makeVisible($user->getAttributes());
+        $data = array_merge($user->getAttributes(), ['role' => $roleName]);
+
+        $createdUser = $this->service->createUser($data);
+
+        $createdUserFromDB = $this->service->getUserById($createdUser->id);
+
+        $this->assertCount(1, $createdUserFromDB->roles);
+        $this->assertEquals($roleName, $createdUserFromDB->roles->first()->name);
+        $this->assertCount(sizeof($permissionNames), $createdUserFromDB->getPermissionsViaRoles());
+        $this->assertEquals(
+            collect($permissionNames)->pluck('value')->sort()->toArray(),
+            $createdUserFromDB->getPermissionsViaRoles()->pluck('name')->sort()->toArray()
+        );
     }
 
     /**
@@ -115,5 +147,17 @@ class UserServiceTest extends TestCase
         $this->assertDatabaseMissing($user->getTable(), [
             'id' => $user->id
         ]);
+    }
+
+    public static function roleEnums(): array
+    {
+        return [
+            'admin role' => [
+                RoleEnum::Admin,
+            ],
+            'user role' => [
+                'user role' => RoleEnum::User,
+            ],
+        ];
     }
 }
