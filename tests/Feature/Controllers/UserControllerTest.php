@@ -2,7 +2,11 @@
 
 namespace Tests\Feature\Controllers;
 
+use App\Enums\PermissionEnum;
+use App\Enums\RoleEnum;
 use App\Models\User;
+use App\Services\UserService;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
@@ -36,6 +40,11 @@ class UserControllerTest extends TestCase
      */
     public function test_create()
     {
+        $this->seed(RolePermissionSeeder::class);
+        $roleEnum = RoleEnum::User;
+        $roleName = $roleEnum->value;
+        $permissionNames = PermissionEnum::permissionsFromRoleEnum($roleEnum);
+
         /** @var User $model */
         $model = User::factory()->make();
         $model->makeVisible($model->getAttributes());
@@ -46,6 +55,18 @@ class UserControllerTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonFragment(Arr::except($data, ['password', 'remember_token']));
+
+        /** @var UserService $service */
+        $service = app(UserService::class);
+        $createdUserFromDB = $service->getUserById($response->json('data.id'));
+
+        $this->assertCount(1, $createdUserFromDB->roles);
+        $this->assertEquals($roleName, $createdUserFromDB->roles->first()->name);
+        $this->assertCount(sizeof($permissionNames), $createdUserFromDB->getPermissionsViaRoles());
+        $this->assertEquals(
+            collect($permissionNames)->pluck('value')->sort()->toArray(),
+            $createdUserFromDB->getPermissionsViaRoles()->pluck('name')->sort()->toArray()
+        );
     }
 
     /**

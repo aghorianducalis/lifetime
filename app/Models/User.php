@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property string $id
@@ -21,11 +24,14 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Collection|Event[]|array $events
  * @property-read Collection|Resource[]|array $resources
  * @property-read Collection|ResourceType[]|array $resourceTypes
+ * @property-read Collection|Role[]|array $roles
+ * @property-read Collection|Permission[]|array $permissions
  */
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasRoles;
     use HasUuids;
     use Notifiable;
 
