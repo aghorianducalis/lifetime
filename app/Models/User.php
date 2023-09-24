@@ -19,6 +19,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $id
  * @property string $name
  * @property string $email
+ * @property string $password
+ * @property string $remember_token
  * @property Carbon|string $email_verified_at
  * @property-read Collection|Coordinate[]|array $coordinates
  * @property-read Collection|Event[]|array $events

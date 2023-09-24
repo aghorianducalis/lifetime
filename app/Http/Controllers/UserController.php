@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request, UserService $service)
     {
-        $data = array_merge($request->validated(), ['role' => RoleEnum::User->value]);
+        $data = array_merge($request->validated(), ['role' => RoleEnum::User]);
         $user = $service->createUser($data);
 
         return new UserResource($user);
