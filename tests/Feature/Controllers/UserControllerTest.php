@@ -44,17 +44,19 @@ class UserControllerTest extends TestCase
         $roleEnum = RoleEnum::User;
         $roleName = $roleEnum->value;
         $permissionNames = PermissionEnum::permissionsFromRoleEnum($roleEnum);
+        $password = 'password';
 
         /** @var User $model */
-        $model = User::factory()->make();
+        $model = User::factory()->make(['password' => $password]);
         $model->makeVisible($model->getAttributes());
         $data = $model->getAttributes();
         $data['email_verified_at'] = $data['email_verified_at']->toDateTimeString();
+        $data['password_confirmation'] = $password;
 
         $response = $this->postJson(route('users.store'), $data);
 
         $response->assertStatus(201)
-            ->assertJsonFragment(Arr::except($data, ['password', 'remember_token']));
+            ->assertJsonFragment(Arr::except($data, ['password', 'password_confirmation', 'remember_token']));
 
         /** @var UserService $service */
         $service = app(UserService::class);

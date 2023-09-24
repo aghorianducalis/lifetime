@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 
 /**
- * @property string $name
- * @property string $email
- * @property string $password
- * @property string|null $email_verified_at
+ * @property-read string $token
+ * @property-read string $email
+ * @property-read string $password
  */
-class StoreUserRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,25 +28,18 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
+            'token'    => [
                 'required',
-                'string',
-                'max:255',
             ],
-            'email' => [
+            'email'    => [
                 'required',
                 'string',
                 'email',
-                'max:255',
-                'unique:' . User::class,
             ],
             'password' => [
                 'required',
                 'confirmed',
                 Rules\Password::defaults(),
-            ],
-            'email_verified_at' => [
-                'date_format:Y-m-d H:i:s',
             ],
         ];
     }

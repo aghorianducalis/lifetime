@@ -5,8 +5,12 @@ namespace App\Services;
 use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class UserService
 {
@@ -29,15 +33,19 @@ class UserService
 
     public function createUser(array $data): User
     {
+        $role = $data['role'] ?? RoleEnum::User;
+        unset($data['role']);
+
         $password = Hash::make($data['password']);
         $data['password'] = $password;
-        $user = $this->userRepository->create($data);
 
-        $role = RoleEnum::tryFrom($data['role'] ?? '') ?? RoleEnum::User;
+        $user = $this->userRepository->create($data);
 
         /** @var RolePermissionService $service */
         $service = app(RolePermissionService::class);
         $service->assignRoleToUser($user, $role);
+
+        event(new Registered($user));
 
         return $user;
     }
@@ -53,5 +61,27 @@ class UserService
     public function deleteUser(string $id): bool
     {
         return $this->userRepository->delete($id);
+    }
+
+    /**
+     * Attempt to reset the user's password.
+     * If it is successful we will update the password on an actual user model and persist it to the database.
+     *
+     * @param array $data
+     * @return string
+     */
+    public function resetPassword(array $data): string
+    {
+        return Password::reset(
+                $data,
+                function (User $user) use ($data) {
+                    $this->userRepository->update([
+                        'password'       => Hash::make($data['password']),
+                        'remember_token' => Str::random(60),
+                    ], $user->id);
+
+                    event(new PasswordReset($user));
+                }
+            );
     }
 }

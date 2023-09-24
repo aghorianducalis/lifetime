@@ -84,20 +84,19 @@ class UserServiceTest extends TestCase
     public function test_create_with_role(RoleEnum $roleEnum)
     {
         $this->seed(RolePermissionSeeder::class);
-        $roleName = $roleEnum->value;
         $permissionNames = PermissionEnum::permissionsFromRoleEnum($roleEnum);
 
         /** @var User $user */
         $user = User::factory()->make();
         $user->makeVisible($user->getAttributes());
-        $data = array_merge($user->getAttributes(), ['role' => $roleName]);
+        $data = array_merge($user->getAttributes(), ['role' => $roleEnum]);
 
         $createdUser = $this->service->createUser($data);
 
         $createdUserFromDB = $this->service->getUserById($createdUser->id);
 
         $this->assertCount(1, $createdUserFromDB->roles);
-        $this->assertEquals($roleName, $createdUserFromDB->roles->first()->name);
+        $this->assertEquals($roleEnum->value, $createdUserFromDB->roles->first()->name);
         $this->assertCount(sizeof($permissionNames), $createdUserFromDB->getPermissionsViaRoles());
         $this->assertEquals(
             collect($permissionNames)->pluck('value')->sort()->toArray(),

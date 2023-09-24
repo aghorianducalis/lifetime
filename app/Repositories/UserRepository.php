@@ -12,7 +12,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
     {
         $model = new User();
         $model->fill($data);
-        $model->email_verified_at = $data['email_verified_at'];
+        $model->email_verified_at = $data['email_verified_at'] ?? null;
         $model->save();
 
         return $model;
@@ -23,7 +23,8 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         /** @var User $model */
         $model = $this->find($id);
         $model->fill($data);
-        $model->email_verified_at = $data['email_verified_at'];
+        $model->email_verified_at = $data['email_verified_at'] ?? $model->email_verified_at;
+        $model->remember_token = $data['remember_token'] ?? $model->remember_token;
         $model->save();
         $model->refresh();
 
