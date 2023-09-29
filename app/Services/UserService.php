@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Enums\RoleEnum;
@@ -21,14 +23,14 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function getUserById(string $id): User
-    {
-        return $this->userRepository->find($id);
-    }
-
     public function getAllUsers(): Collection
     {
         return $this->userRepository->matching();
+    }
+
+    public function getUserById(string $id): User
+    {
+        return $this->userRepository->find($id);
     }
 
     public function createUser(array $data): User
@@ -83,5 +85,10 @@ class UserService
                     event(new PasswordReset($user));
                 }
             );
+    }
+
+    public static function getInstance(): UserService
+    {
+        return app(UserService::class);
     }
 }

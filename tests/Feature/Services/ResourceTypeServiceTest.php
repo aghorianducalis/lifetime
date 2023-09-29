@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services;
 
 use App\Models\ResourceType;
@@ -26,6 +28,7 @@ class ResourceTypeServiceTest extends TestCase
     {
         $resourceTypes = ResourceType::factory(5)->create();
 
+        /** @var ResourceTypeRepositoryInterface $repositoryMock */
         $repositoryMock = $this->mock(ResourceTypeRepositoryInterface::class, function (MockInterface $mock) use ($resourceTypes) {
             $mock->shouldReceive('matching')->once()->andReturn($resourceTypes);
         });
@@ -45,6 +48,7 @@ class ResourceTypeServiceTest extends TestCase
         /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->create();
 
+        /** @var ResourceTypeRepositoryInterface $repositoryMock */
         $repositoryMock = $this->mock(ResourceTypeRepositoryInterface::class, function (MockInterface $mock) use ($resourceType) {
             $mock->shouldReceive('find')->once()->with($resourceType->id)->andReturn($resourceType);
         });
@@ -70,6 +74,7 @@ class ResourceTypeServiceTest extends TestCase
         /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->withUsers([$userId])->create();
 
+        /** @var ResourceTypeRepositoryInterface $repositoryMock */
         $repositoryMock = $this->partialMock(ResourceTypeRepositoryInterface::class, function (MockInterface $mock) use ($userId, $resourceType) {
             $mock->shouldReceive('findByUser')->once()->with($userId)->andReturn(collect([$resourceType]));
         });
@@ -81,6 +86,30 @@ class ResourceTypeServiceTest extends TestCase
         $foundResourceType = $foundResourceTypes->first();
         $this->assertEquals($resourceType->id, $foundResourceType->id);
         $this->assertEquals($userId, $foundResourceType->users()->first()->id);
+    }
+
+    /**
+     * @test
+     * @covers ::doesResourceTypeBelongToUser
+     */
+    public function test_does_resource_type_belong_to_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var User $anotherUser */
+        $anotherUser = User::factory()->create();
+        /** @var ResourceType $resourceType */
+        $resourceType = ResourceType::factory()->withUsers([$user->id])->create();
+
+        $service = $this->makeService();
+
+        $result = $service->doesResourceTypeBelongToUser($resourceType->id, $user->id);
+
+        $this->assertTrue($result);
+
+        $result = $service->doesResourceTypeBelongToUser($resourceType->id, $anotherUser->id);
+
+        $this->assertFalse($result);
     }
 
     /**
@@ -132,6 +161,7 @@ class ResourceTypeServiceTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->create();
 
         $result = $this->makeService()->deleteResourceType($resourceType->id);
@@ -140,6 +170,22 @@ class ResourceTypeServiceTest extends TestCase
         $this->assertDatabaseMissing($resourceType->getTable(), [
             'id' => $resourceType->id
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::getInstance
+     */
+    public function test_get_instance()
+    {
+        $service = ResourceTypeService::getInstance();
+
+        $this->assertInstanceOf(ResourceTypeService::class, $service);
+
+        $service2 = ResourceTypeService::getInstance();
+
+        $this->assertInstanceOf(ResourceTypeService::class, $service2);
+        $this->assertSame($service, $service2);
     }
 
     protected function makeService(ResourceTypeRepositoryInterface $repositoryMock = null): ResourceTypeService

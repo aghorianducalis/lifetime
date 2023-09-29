@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Repositories;
 
 use App\Models\Coordinate;
@@ -250,6 +252,7 @@ class CoordinateRepositoryTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var Coordinate $coordinate */
         $coordinate = Coordinate::factory()->create();
 
         $result = $this->repository->delete($coordinate->id);

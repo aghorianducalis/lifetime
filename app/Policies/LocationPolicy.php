@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\Location;
+use App\Enums\PermissionEnum;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Services\LocationService;
 
 class LocationPolicy
 {
@@ -13,15 +15,16 @@ class LocationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can(PermissionEnum::ViewLocations->value);
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Location $location): bool
+    public function view(User $user, string $locationId): bool
     {
-        return true;
+        return $user->can(PermissionEnum::ViewLocation->value)
+            && LocationService::getInstance()->doesLocationBelongToUser($locationId, $user->id);
     }
 
     /**
@@ -29,22 +32,25 @@ class LocationPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can(PermissionEnum::CreateLocation->value);
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Location $location): bool
+    public function update(User $user, string $locationId): bool
     {
-        return true;
+        return $user->can(PermissionEnum::UpdateLocation->value)
+            && LocationService::getInstance()->doesLocationBelongToUser($locationId, $user->id);
+
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Location $location): bool
+    public function delete(User $user, string $locationId): bool
     {
-        return true;
+        return $user->can(PermissionEnum::DeleteLocation->value)
+            && LocationService::getInstance()->doesLocationBelongToUser($locationId, $user->id);
     }
 }

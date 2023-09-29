@@ -25,7 +25,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::namespace('coordinates')
-    /*->middleware('')*/
+    ->middleware('auth')
     ->name('coordinates')
     ->prefix('coordinates')
     ->as('coordinates.')
@@ -38,7 +38,7 @@ Route::namespace('coordinates')
     });
 
 Route::namespace('locations')
-    /*->middleware('')*/
+    ->middleware('auth')
     ->name('locations')
     ->prefix('locations')
     ->as('locations.')
@@ -51,7 +51,7 @@ Route::namespace('locations')
     });
 
 Route::namespace('events')
-    /*->middleware('')*/
+    ->middleware('auth')
     ->name('events')
     ->prefix('events')
     ->as('events.')
@@ -64,7 +64,7 @@ Route::namespace('events')
     });
 
 Route::namespace('resources')
-    /*->middleware('')*/
+    ->middleware('auth')
     ->name('resources')
     ->prefix('resources')
     ->as('resources.')
@@ -77,7 +77,7 @@ Route::namespace('resources')
     });
 
 Route::namespace('resource-types')
-    /*->middleware('')*/
+    ->middleware('auth')
     ->name('resource-types')
     ->prefix('resource-types')
     ->as('resource-types.')
@@ -90,7 +90,7 @@ Route::namespace('resource-types')
     });
 
 Route::namespace('users')
-    /*->middleware('')*/
+    ->middleware('auth')
     ->name('users')
     ->prefix('users')
     ->as('users.')

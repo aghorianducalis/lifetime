@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services;
 
 use App\Models\Event;
+use App\Models\User;
+use App\Services\CoordinateService;
 use App\Services\EventService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -49,6 +53,49 @@ class EventServiceTest extends TestCase
         $events = $this->service->getAllEvents();
 
         $this->assertCount(5, $events);
+    }
+
+    /**
+     * @test
+     * @covers ::getEventsByUser
+     */
+    public function test_get_events_by_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Event $event */
+        $event = Event::factory()->withUsers([$user->id])->create();
+
+        $foundEvents = $this->service->getEventsByUser($user->id);
+
+        $this->assertCount(1, $foundEvents);
+        /** @var Event $foundEvent */
+        $foundEvent = $foundEvents->first();
+        $this->assertEquals($event->id, $foundEvent->id);
+        $this->assertEquals($user->id, $foundEvent->users->first()->id);
+    }
+
+    /**
+     * @test
+     * @covers ::doesEventBelongToUser
+     */
+    public function test_does_event_belong_to_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var User $anotherUser */
+        $anotherUser = User::factory()->create();
+        /** @var Event $event */
+        $event = Event::factory()->withUsers([$user->id])->create();
+
+        $result = $this->service->doesEventBelongToUser($event->id, $user->id);
+
+        $this->assertTrue($result);
+
+        $result = $this->service->doesEventBelongToUser($event->id, $anotherUser->id);
+
+        $this->assertFalse($result);
     }
 
     /**
@@ -100,6 +147,7 @@ class EventServiceTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var Event $event */
         $event = Event::factory()->create();
 
         $result = $this->service->deleteEvent($event->id);
@@ -108,5 +156,21 @@ class EventServiceTest extends TestCase
         $this->assertDatabaseMissing($event->getTable(), [
             'id' => $event->id,
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::getInstance
+     */
+    public function test_get_instance()
+    {
+        $service = CoordinateService::getInstance();
+
+        $this->assertInstanceOf(CoordinateService::class, $service);
+
+        $service2 = CoordinateService::getInstance();
+
+        $this->assertInstanceOf(CoordinateService::class, $service2);
+        $this->assertSame($service, $service2);
     }
 }

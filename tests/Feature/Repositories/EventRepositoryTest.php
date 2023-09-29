@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Repositories;
 
 use App\Models\Coordinate;
@@ -63,6 +65,25 @@ class EventRepositoryTest extends TestCase
         $events = $this->repository->matching();
 
         $this->assertCount(5, $events);
+    }
+
+    /**
+     * @test
+     * @covers ::findByUser
+     */
+    public function test_find_by_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Event $event */
+        $event = Event::factory()->withUsers([$user->id])->create();
+
+        $foundEvents = $this->repository->findByUser($user->id);
+        $this->assertCount(1, $foundEvents);
+        $foundEvent = $foundEvents->first();
+        $this->assertEquals($event->id, $foundEvent->id);
+        $this->assertEquals($user->id, $foundEvent->users()->first()->id);
     }
 
     /**
@@ -269,6 +290,7 @@ class EventRepositoryTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var Event $event */
         $event = Event::factory()->create();
 
         $result = $this->repository->delete($event->id);

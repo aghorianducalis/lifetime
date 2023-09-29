@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Services\RolePermissionService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -44,6 +48,25 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function withRole(RoleEnum $roleEnum)
+    {
+        return $this->afterCreating(function (User $user) use ($roleEnum) {
+            /** @var RolePermissionService $service */
+            $service = app(RolePermissionService::class);
+            $service->assignRoleToUser($user, $roleEnum);
+        });
+    }
+
+    public function admin()
+    {
+        return $this->withRole(RoleEnum::Admin);
+    }
+
+    public function user()
+    {
+        return $this->withRole(RoleEnum::User);
     }
 
     public function withEvents(array $eventIds): static

@@ -1,24 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Models\Coordinate;
-use App\Repositories\Filters\Criteria;
-use App\Repositories\Filters\HasUserFilter;
 use App\Repositories\Interfaces\CoordinateRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 
 class CoordinateRepository extends EloquentRepository implements CoordinateRepositoryInterface
 {
-    public function findByUser(?string $userId): Collection
-    {
-        $criteria = new Criteria;
-        $criteria->push(new HasUserFilter($userId));
-
-        return $this->matching($criteria);
-    }
-
     public function attachUsers(Coordinate $coordinate, array $userIds): void
     {
         $coordinate->users()->attach($userIds);

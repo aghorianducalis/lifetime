@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services;
 
 use App\Enums\PermissionEnum;
@@ -146,6 +148,22 @@ class UserServiceTest extends TestCase
         $this->assertDatabaseMissing($user->getTable(), [
             'id' => $user->id
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::getInstance
+     */
+    public function test_get_instance()
+    {
+        $service = UserService::getInstance();
+
+        $this->assertInstanceOf(UserService::class, $service);
+
+        $service2 = UserService::getInstance();
+
+        $this->assertInstanceOf(UserService::class, $service2);
+        $this->assertSame($service, $service2);
     }
 
     public static function roleEnums(): array

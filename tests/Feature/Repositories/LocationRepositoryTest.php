@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Repositories;
 
+use App\Models\Coordinate;
 use App\Models\Location;
+use App\Models\User;
 use App\Repositories\LocationRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,6 +52,48 @@ class LocationRepositoryTest extends TestCase
     {
         $this->expectException(ModelNotFoundException::class);
         $this->repository->find($this->getRandomUuid());
+    }
+
+    /**
+     * @test
+     * @covers ::findByUser
+     */
+    public function test_find_by_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var Coordinate $coordinate */
+        $coordinate = Coordinate::factory()->withUsers([$user->id])->create();
+        /** @var Location $location */
+        $location = Location::factory()->create(['coordinate_id' => $coordinate->id]);
+
+        $foundLocations = $this->repository->findByUser($user->id);
+        $this->assertCount(1, $foundLocations);
+        /** @var Location $foundLocation */
+        $foundLocation = $foundLocations->first();
+        $this->assertEquals($location->id, $foundLocation->id);
+        $this->assertEquals($user->id, $foundLocation->coordinate->users->first()->id);
+    }
+
+    /**
+     * @test
+     * @covers ::findByCoordinateIds
+     */
+    public function test_find_by_coordinate_ids()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var Coordinate $coordinate */
+        $coordinate = Coordinate::factory()->withUsers([$user->id])->create();
+        /** @var Location $location */
+        $location = Location::factory()->create(['coordinate_id' => $coordinate->id]);
+
+        $foundLocations = $this->repository->findByCoordinateIds([$coordinate->id]);
+        $this->assertCount(1, $foundLocations);
+        /** @var Location $foundLocation */
+        $foundLocation = $foundLocations->first();
+        $this->assertEquals($location->id, $foundLocation->id);
+        $this->assertEquals($user->id, $foundLocation->coordinate->users->first()->id);
     }
 
     /**
@@ -130,6 +176,7 @@ class LocationRepositoryTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var Location $location */
         $location = Location::factory()->create();
 
         $result = $this->repository->delete($location->id);

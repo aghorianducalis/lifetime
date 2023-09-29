@@ -171,8 +171,16 @@ To see logs:
   docker-compose logs
 ```
 
-#### All next operations should be executed inside container:
+#### Setup 'app' container
 
+All next operations should be executed inside 'app' container.
+
+Setup file access rules at storage folder(cache, logs and user files):
+```
+  chmod -R o+w storage
+```
+
+Install dependencies:
 ```
   composer install
 ```
@@ -184,9 +192,9 @@ Execute laravel preparations commands:
   php artisan storage:link
 ```
 
-Setup file access rules at storage folder(cache, logs and user files)
+Run the seeder for roles and permissions:
 ```
-  chmod -R o+w storage
+  php artisan roles-permissions:sync
 ```
 
 ## Containers and services

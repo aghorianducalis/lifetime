@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\ResourceType;
@@ -15,6 +17,11 @@ class ResourceTypeService
         $this->repository = $repository;
     }
 
+    public function getAllResourceTypes(): Collection
+    {
+        return $this->repository->matching();
+    }
+
     public function getResourceTypeById(string $id): ResourceType
     {
         return $this->repository->find($id);
@@ -25,9 +32,10 @@ class ResourceTypeService
         return $this->repository->findByUser($userId);
     }
 
-    public function getAllResourceTypes(): Collection
+    public function doesResourceTypeBelongToUser(string $resourceTypeId, string $userId): bool
     {
-        return $this->repository->matching();
+        // todo rewrite this with matching()
+        return $this->getResourceTypesByUser($userId)->pluck('id')->contains($resourceTypeId);
     }
 
     public function createResourceType(array $data): ResourceType
@@ -43,5 +51,10 @@ class ResourceTypeService
     public function deleteResourceType(string $id): bool
     {
         return $this->repository->delete($id);
+    }
+
+    public static function getInstance(): ResourceTypeService
+    {
+        return app(ResourceTypeService::class);
     }
 }

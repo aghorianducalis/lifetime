@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Repositories;
 
 use App\Models\ResourceType;
@@ -7,6 +9,7 @@ use App\Models\User;
 use App\Repositories\Filters\Criteria;
 use App\Repositories\Filters\TitleFilter;
 use App\Repositories\ResourceTypeRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -90,6 +93,7 @@ class ResourceTypeRepositoryTest extends TestCase
      */
     public function test_matching()
     {
+        /** @var Collection<int,ResourceType> $resourceTypesCreated */
         $resourceTypesCreated = ResourceType::factory(5)->create();
 
         $criteria = new Criteria;
@@ -211,6 +215,7 @@ class ResourceTypeRepositoryTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var ResourceType $resourceType */
         $resourceType = ResourceType::factory()->create();
 
         $result = $this->repository->delete($resourceType->id);
