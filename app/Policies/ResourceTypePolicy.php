@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\ResourceType;
+use App\Enums\PermissionEnum;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Services\ResourceTypeService;
 
 class ResourceTypePolicy
 {
@@ -13,15 +15,16 @@ class ResourceTypePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can(PermissionEnum::ViewResourceTypes->value);
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ResourceType $resource): bool
+    public function view(User $user, string $resourceTypeId): bool
     {
-        return true;
+        return $user->can(PermissionEnum::ViewResourceType->value)
+            && ResourceTypeService::getInstance()->doesResourceTypeBelongToUser($resourceTypeId, $user->id);
     }
 
     /**
@@ -29,23 +32,24 @@ class ResourceTypePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can(PermissionEnum::CreateResourceType->value);
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ResourceType $resource): bool
+    public function update(User $user, string $resourceTypeId): bool
     {
-        return true;
+        return $user->can(PermissionEnum::UpdateResourceType->value)
+            && ResourceTypeService::getInstance()->doesResourceTypeBelongToUser($resourceTypeId, $user->id);
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, ResourceType $resource): bool
+    public function delete(User $user, string $resourceTypeId): bool
     {
-        return true;
-        return $resource->resourceItems->isEmpty();
+        return $user->can(PermissionEnum::DeleteResourceType->value)
+            && ResourceTypeService::getInstance()->doesResourceTypeBelongToUser($resourceTypeId, $user->id);
     }
 }

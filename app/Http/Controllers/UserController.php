@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
 use App\Http\Requests\IndexUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -17,12 +22,15 @@ class UserController extends Controller
      * @param \App\Http\Requests\IndexUserRequest $request
      * @param \App\Services\UserService $service
      * @return \App\Http\Resources\UserCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function index(IndexUserRequest $request, UserService $service)
+    public function index(IndexUserRequest $request, UserService $service): UserCollection
     {
+        $this->authorize('viewAny', User::class);
+
         $users = $service->getAllUsers();
 
-        return UserResource::collection($users);
+        return new UserCollection($users);
     }
 
     /**
@@ -31,9 +39,12 @@ class UserController extends Controller
      * @param \App\Http\Requests\StoreUserRequest $request
      * @param \App\Services\UserService $service
      * @return \App\Http\Resources\UserResource
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(StoreUserRequest $request, UserService $service)
+    public function store(StoreUserRequest $request, UserService $service): UserResource
     {
+        $this->authorize('create', User::class);
+
         $data = array_merge($request->validated(), ['role' => RoleEnum::User]);
         $user = $service->createUser($data);
 
@@ -46,9 +57,12 @@ class UserController extends Controller
      * @param string $userId
      * @param \App\Services\UserService $service
      * @return \App\Http\Resources\UserResource
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show(string $userId, UserService $service)
+    public function show(string $userId, UserService $service): UserResource
     {
+        $this->authorize('view', [User::class, $userId]);
+
         $user = $service->getUserById($userId);
 
         return new UserResource($user);
@@ -61,9 +75,12 @@ class UserController extends Controller
      * @param string $userId
      * @param \App\Services\UserService $service
      * @return \App\Http\Resources\UserResource
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(UpdateUserRequest $request, string $userId, UserService $service)
+    public function update(UpdateUserRequest $request, string $userId, UserService $service): UserResource
     {
+        $this->authorize('update', [User::class, $userId]);
+
         $user = $service->updateUser($request->validated(), $userId);
 
         return new UserResource($user);
@@ -75,9 +92,12 @@ class UserController extends Controller
      * @param string $userId
      * @param \App\Services\UserService $service
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function destroy(string $userId, UserService $service)
+    public function destroy(string $userId, UserService $service): JsonResponse
     {
+        $this->authorize('delete', [User::class, $userId]);
+
         $result = $service->deleteUser($userId);
 
         return response()->json(['result' => $result]);

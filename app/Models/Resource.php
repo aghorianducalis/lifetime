@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -40,8 +42,8 @@ class Resource extends Model
     protected function amount(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => round($value, 4),
-            set: fn (string $value) => round($value, 4),
+            get: fn ($value) => round($value, 4),
+            set: fn ($value) => round($value, 4),
         );
     }
 

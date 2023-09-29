@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -53,8 +55,8 @@ class Coordinate extends Model
     protected function x(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => round($value, 6),
-            set: fn (string $value) => round($value, 6),
+            get: fn ($value) => round($value, 6),
+            set: fn ($value) => round($value, 6),
         );
     }
 
@@ -64,8 +66,8 @@ class Coordinate extends Model
     protected function y(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => round($value, 6),
-            set: fn (string $value) => round($value, 6),
+            get: fn ($value) => round($value, 6),
+            set: fn ($value) => round($value, 6),
         );
     }
 
@@ -75,8 +77,8 @@ class Coordinate extends Model
     protected function z(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => round($value, 6),
-            set: fn (string $value) => round($value, 6),
+            get: fn ($value) => round($value, 6),
+            set: fn ($value) => round($value, 6),
         );
     }
 

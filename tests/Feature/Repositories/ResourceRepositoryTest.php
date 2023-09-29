@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Repositories;
 
 use App\Models\Event;
@@ -240,6 +242,7 @@ class ResourceRepositoryTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var Resource $resource */
         $resource = Resource::factory()->create();
 
         $result = $this->repository->delete($resource->id);

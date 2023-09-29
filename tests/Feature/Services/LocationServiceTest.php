@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services;
 
+use App\Models\Coordinate;
 use App\Models\Location;
+use App\Models\User;
 use App\Services\LocationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -24,6 +28,19 @@ class LocationServiceTest extends TestCase
 
     /**
      * @test
+     * @covers ::getAllLocations
+     */
+    public function test_get_all_locations()
+    {
+        Location::factory(5)->create();
+
+        $locations = $this->service->getAllLocations();
+
+        $this->assertCount(5, $locations);
+    }
+
+    /**
+     * @test
      * @covers ::getLocationById
      */
     public function test_get_location_by_id()
@@ -41,15 +58,47 @@ class LocationServiceTest extends TestCase
 
     /**
      * @test
-     * @covers ::getAllLocations
+     * @covers ::getLocationsByUser
      */
-    public function test_get_all_locations()
+    public function test_get_locations_by_user()
     {
-        Location::factory(5)->create();
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var Coordinate $coordinate */
+        $coordinate = Coordinate::factory()->withUsers([$user->id])->create();
+        /** @var Location $location */
+        $location = Location::factory()->create(['coordinate_id' => $coordinate->id]);
 
-        $locations = $this->service->getAllLocations();
+        $foundLocations = $this->service->getLocationsByUser($user->id);
+        $this->assertCount(1, $foundLocations);
+        /** @var Location $foundLocation */
+        $foundLocation = $foundLocations->first();
+        $this->assertEquals($location->id, $foundLocation->id);
+        $this->assertEquals($user->id, $foundLocation->coordinate->users->first()->id);
+    }
 
-        $this->assertCount(5, $locations);
+    /**
+     * @test
+     * @covers ::doesLocationBelongToUser
+     */
+    public function test_does_location_belong_to_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var User $anotherUser */
+        $anotherUser = User::factory()->create();
+        /** @var Coordinate $coordinate */
+        $coordinate = Coordinate::factory()->withUsers([$user->id])->create();
+        /** @var Location $location */
+        $location = Location::factory()->create(['coordinate_id' => $coordinate->id]);
+
+        $result = $this->service->doesLocationBelongToUser($location->id, $user->id);
+
+        $this->assertTrue($result);
+
+        $result = $this->service->doesLocationBelongToUser($location->id, $anotherUser->id);
+
+        $this->assertFalse($result);
     }
 
     /**
@@ -114,5 +163,21 @@ class LocationServiceTest extends TestCase
         $this->assertDatabaseMissing($location->getTable(), [
             'id' => $location->id
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::getInstance
+     */
+    public function test_get_instance()
+    {
+        $service = LocationService::getInstance();
+
+        $this->assertInstanceOf(LocationService::class, $service);
+
+        $service2 = LocationService::getInstance();
+
+        $this->assertInstanceOf(LocationService::class, $service2);
+        $this->assertSame($service, $service2);
     }
 }

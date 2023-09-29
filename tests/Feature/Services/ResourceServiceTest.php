@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services;
 
 use App\Models\Resource;
 use App\Models\User;
-use App\Repositories\Interfaces\ResourceRepositoryInterface;
 use App\Services\ResourceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -78,6 +79,28 @@ class ResourceServiceTest extends TestCase
 
     /**
      * @test
+     * @covers ::doesResourceBelongToUser
+     */
+    public function test_does_resource_belong_to_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var User $anotherUser */
+        $anotherUser = User::factory()->create();
+        /** @var Resource $resource */
+        $resource = Resource::factory()->withUsers([$user->id])->create();
+
+        $result = $this->service->doesResourceBelongToUser($resource->id, $user->id);
+
+        $this->assertTrue($result);
+
+        $result = $this->service->doesResourceBelongToUser($resource->id, $anotherUser->id);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @test
      * @covers ::createResource
      */
     public function test_create()
@@ -134,5 +157,21 @@ class ResourceServiceTest extends TestCase
         $this->assertDatabaseMissing($resource->getTable(), [
             'id' => $resource->id
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::getInstance
+     */
+    public function test_get_instance()
+    {
+        $service = ResourceService::getInstance();
+
+        $this->assertInstanceOf(ResourceService::class, $service);
+
+        $service2 = ResourceService::getInstance();
+
+        $this->assertInstanceOf(ResourceService::class, $service2);
+        $this->assertSame($service, $service2);
     }
 }

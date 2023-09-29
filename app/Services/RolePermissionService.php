@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Enums\PermissionEnum;
@@ -29,7 +31,7 @@ class RolePermissionService
         return $user->assignRole($roleEnum->value);
     }
 
-    public function syncRolesAndPermissions()
+    public function syncRolesAndPermissions(): void
     {
         foreach (RoleEnum::cases() as $roleEnum) {
             $role = $this->firstOrCreateRole($roleEnum->value);
@@ -79,5 +81,10 @@ class RolePermissionService
         }
 
         return $permissionFromDB;
+    }
+
+    public static function getInstance(): RolePermissionService
+    {
+        return app(RolePermissionService::class);
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Repositories\Filters\Criteria;
+use App\Repositories\Filters\HasUserFilter;
 use App\Repositories\Interfaces\RepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +25,14 @@ abstract class EloquentRepository implements RepositoryInterface
     public function find($id): Model
     {
         return $this->query()->findOrFail($id);
+    }
+
+    public function findByUser(?string $userId): Collection
+    {
+        $criteria = new Criteria;
+        $criteria->push(new HasUserFilter($userId));
+
+        return $this->matching($criteria);
     }
 
     public function create(array $data): Model

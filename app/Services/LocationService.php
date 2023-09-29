@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Location;
@@ -15,14 +17,27 @@ class LocationService
         $this->locationRepository = $locationRepository;
     }
 
+    public function getAllLocations(): Collection
+    {
+        return $this->locationRepository->matching();
+    }
+
+    public function getLocationsByUser(?string $userId): Collection
+    {
+        return $this->locationRepository->findByUser($userId);
+    }
+
     public function getLocationById(string $id): Location
     {
         return $this->locationRepository->find($id);
     }
 
-    public function getAllLocations(): Collection
+    public function doesLocationBelongToUser(string $locationId, string $userId): bool
     {
-        return $this->locationRepository->matching();
+        $location = $this->getLocationById($locationId);
+
+        // todo rewrite using query builder or mathcing() with filters
+        return CoordinateService::getInstance()->getCoordinatesByUser($userId)->pluck('id')->contains($location->coordinate_id);
     }
 
     public function createLocation(array $data): Location
@@ -38,5 +53,10 @@ class LocationService
     public function deleteLocation(string $id): bool
     {
         return $this->locationRepository->delete($id);
+    }
+
+    public static function getInstance(): LocationService
+    {
+        return app(LocationService::class);
     }
 }

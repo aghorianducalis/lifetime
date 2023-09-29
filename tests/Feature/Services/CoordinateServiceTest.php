@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services;
 
 use App\Models\Coordinate;
 use App\Models\User;
-use App\Repositories\Interfaces\CoordinateRepositoryInterface;
 use App\Services\CoordinateService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -80,6 +81,28 @@ class CoordinateServiceTest extends TestCase
 
     /**
      * @test
+     * @covers ::doesCoordinateBelongToUser
+     */
+    public function test_does_coordinate_belong_to_user()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var User $anotherUser */
+        $anotherUser = User::factory()->create();
+        /** @var Coordinate $coordinate */
+        $coordinate = Coordinate::factory()->withUsers([$user->id])->create();
+
+        $result = $this->service->doesCoordinateBelongToUser($coordinate->id, $user->id);
+
+        $this->assertTrue($result);
+
+        $result = $this->service->doesCoordinateBelongToUser($coordinate->id, $anotherUser->id);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @test
      * @covers ::createCoordinate
      */
     public function test_create()
@@ -144,5 +167,21 @@ class CoordinateServiceTest extends TestCase
         $this->assertDatabaseMissing($coordinate->getTable(), [
             'id' => $coordinate->id
         ]);
+    }
+
+    /**
+     * @test
+     * @covers ::getInstance
+     */
+    public function test_get_instance()
+    {
+        $service = CoordinateService::getInstance();
+
+        $this->assertInstanceOf(CoordinateService::class, $service);
+
+        $service2 = CoordinateService::getInstance();
+
+        $this->assertInstanceOf(CoordinateService::class, $service2);
+        $this->assertSame($service, $service2);
     }
 }

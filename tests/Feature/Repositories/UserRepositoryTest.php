@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Repositories;
 
 use App\Models\Coordinate;
@@ -318,6 +320,7 @@ class UserRepositoryTest extends TestCase
      */
     public function test_delete()
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         $result = $this->repository->delete($user->id);
